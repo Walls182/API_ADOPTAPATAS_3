@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34202.233
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API_ADOPTAPATAS_3", "API_ADOPTAPATAS_3\API_ADOPTAPATAS_3.csproj", "{7A8959BF-1117-4953-96DE-8A80B35ED87A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7A8959BF-1117-4953-96DE-8A80B35ED87A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A8959BF-1117-4953-96DE-8A80B35ED87A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A8959BF-1117-4953-96DE-8A80B35ED87A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A8959BF-1117-4953-96DE-8A80B35ED87A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {47E0902C-3121-47C4-99E2-CB9C88715C30}
+	EndGlobalSection
+EndGlobal
