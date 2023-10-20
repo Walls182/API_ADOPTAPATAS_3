@@ -41,13 +41,11 @@ public partial class BdadoptapatasContext : DbContext
     {
         modelBuilder.Entity<Adopcion>(entity =>
         {
-            entity.HasKey(e => e.IdAdopcion).HasName("PK__Adopcion__210DF8AD070FEC53");
+            entity.HasKey(e => e.IdAdopcion).HasName("PK__Adopcion__210DF8AD3AF49EC2");
 
             entity.ToTable("Adopcion");
 
-            entity.Property(e => e.IdAdopcion)
-                .ValueGeneratedNever()
-                .HasColumnName("idAdopcion");
+            entity.Property(e => e.IdAdopcion).HasColumnName("idAdopcion");
             entity.Property(e => e.FechaAdopcion)
                 .HasColumnType("date")
                 .HasColumnName("fechaAdopcion");
@@ -65,11 +63,9 @@ public partial class BdadoptapatasContext : DbContext
 
         modelBuilder.Entity<Auditorium>(entity =>
         {
-            entity.HasKey(e => e.IdAuditoria).HasName("PK__Auditori__F1F30701A642C181");
+            entity.HasKey(e => e.IdAuditoria).HasName("PK__Auditori__F1F30701AFE30CF2");
 
-            entity.Property(e => e.IdAuditoria)
-                .ValueGeneratedNever()
-                .HasColumnName("idAuditoria");
+            entity.Property(e => e.IdAuditoria).HasColumnName("idAuditoria");
             entity.Property(e => e.Comentario).HasColumnName("comentario");
             entity.Property(e => e.Fecha)
                 .HasColumnType("datetime")
@@ -81,13 +77,11 @@ public partial class BdadoptapatasContext : DbContext
 
         modelBuilder.Entity<Canino>(entity =>
         {
-            entity.HasKey(e => e.IdCanino).HasName("PK__Canino__605AE19B3B269E67");
+            entity.HasKey(e => e.IdCanino).HasName("PK__Canino__605AE19BCE98933F");
 
             entity.ToTable("Canino");
 
-            entity.Property(e => e.IdCanino)
-                .ValueGeneratedNever()
-                .HasColumnName("idCanino");
+            entity.Property(e => e.IdCanino).HasColumnName("idCanino");
             entity.Property(e => e.Descripcion).HasColumnName("descripcion");
             entity.Property(e => e.Disponibilidad).HasColumnName("disponibilidad");
             entity.Property(e => e.Edad).HasColumnName("edad");
@@ -116,13 +110,11 @@ public partial class BdadoptapatasContext : DbContext
 
         modelBuilder.Entity<Donacion>(entity =>
         {
-            entity.HasKey(e => e.IdDonacion).HasName("PK__Donacion__B26019175A547BE3");
+            entity.HasKey(e => e.IdDonacion).HasName("PK__Donacion__B260191716DD108A");
 
             entity.ToTable("Donacion");
 
-            entity.Property(e => e.IdDonacion)
-                .ValueGeneratedNever()
-                .HasColumnName("idDonacion");
+            entity.Property(e => e.IdDonacion).HasColumnName("idDonacion");
             entity.Property(e => e.FechaDonacion)
                 .HasColumnType("date")
                 .HasColumnName("fechaDonacion");
@@ -143,13 +135,11 @@ public partial class BdadoptapatasContext : DbContext
 
         modelBuilder.Entity<Estado>(entity =>
         {
-            entity.HasKey(e => e.IdEstado).HasName("PK__Estado__62EA894A9FF55BC4");
+            entity.HasKey(e => e.IdEstado).HasName("PK__Estado__62EA894A7B066574");
 
             entity.ToTable("Estado");
 
-            entity.Property(e => e.IdEstado)
-                .ValueGeneratedNever()
-                .HasColumnName("idEstado");
+            entity.Property(e => e.IdEstado).HasColumnName("idEstado");
             entity.Property(e => e.DescripEstado)
                 .HasMaxLength(255)
                 .HasColumnName("descripEstado");
@@ -157,13 +147,11 @@ public partial class BdadoptapatasContext : DbContext
 
         modelBuilder.Entity<Fundacion>(entity =>
         {
-            entity.HasKey(e => e.IdFundacion).HasName("PK__Fundacio__70DC633B2F8C790A");
+            entity.HasKey(e => e.IdFundacion).HasName("PK__Fundacio__70DC633B27025D39");
 
             entity.ToTable("Fundacion");
 
-            entity.Property(e => e.IdFundacion)
-                .ValueGeneratedNever()
-                .HasColumnName("idFundacion");
+            entity.Property(e => e.IdFundacion).HasColumnName("idFundacion");
             entity.Property(e => e.Celular)
                 .HasMaxLength(20)
                 .HasColumnName("celular");
@@ -202,13 +190,11 @@ public partial class BdadoptapatasContext : DbContext
 
         modelBuilder.Entity<Login>(entity =>
         {
-            entity.HasKey(e => e.IdLogin).HasName("PK__Login__068B3EBBB2A053D8");
+            entity.HasKey(e => e.IdLogin).HasName("PK__Login__068B3EBB66C70282");
 
             entity.ToTable("Login");
 
-            entity.Property(e => e.IdLogin)
-                .ValueGeneratedNever()
-                .HasColumnName("idLogin");
+            entity.Property(e => e.IdLogin).HasColumnName("idLogin");
             entity.Property(e => e.Contrasena)
                 .HasMaxLength(255)
                 .HasColumnName("contrasena");
@@ -219,13 +205,11 @@ public partial class BdadoptapatasContext : DbContext
 
         modelBuilder.Entity<Rol>(entity =>
         {
-            entity.HasKey(e => e.IdRol).HasName("PK__Rol__3C872F76CDA8EE6F");
+            entity.HasKey(e => e.IdRol).HasName("PK__Rol__3C872F768DD6A330");
 
             entity.ToTable("Rol");
 
-            entity.Property(e => e.IdRol)
-                .ValueGeneratedNever()
-                .HasColumnName("idRol");
+            entity.Property(e => e.IdRol).HasColumnName("idRol");
             entity.Property(e => e.Nombre)
                 .HasMaxLength(50)
                 .HasColumnName("nombre");
@@ -233,13 +217,11 @@ public partial class BdadoptapatasContext : DbContext
 
         modelBuilder.Entity<Usuario>(entity =>
         {
-            entity.HasKey(e => e.IdUsuario).HasName("PK__Usuario__645723A6F0461DCE");
+            entity.HasKey(e => e.IdUsuario).HasName("PK__Usuario__645723A675837CAA");
 
             entity.ToTable("Usuario");
 
-            entity.Property(e => e.IdUsuario)
-                .ValueGeneratedNever()
-                .HasColumnName("idUsuario");
+            entity.Property(e => e.IdUsuario).HasColumnName("idUsuario");
             entity.Property(e => e.Apellido)
                 .HasMaxLength(50)
                 .HasColumnName("apellido");

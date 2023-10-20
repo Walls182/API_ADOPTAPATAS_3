@@ -1,5 +1,7 @@
 using API_ADOPTAPATAS_3.Dtos;
 using API_ADOPTAPATAS_3.Repositories.Models;
+using API_ADOPTAPATAS_3.Repositories.Repository;
+using API_ADOPTAPATAS_3.Services;
 using API_ADOPTAPATAS_3.Utility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +13,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<BdadoptapatasContext>(opciones => opciones.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// add services
+builder.Services.AddScoped<UserService, UserService>();
+
+// add repositories
+builder.Services.AddScoped<UserRepository, UserRepository>();
+
 // Add Automapper settings
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 // Ad jwt settings
