@@ -59,6 +59,43 @@ namespace API_ADOPTAPATAS_3.UserController
             return BadRequest("Error en la creación de usuario");
         }
 
+        [HttpPost("/donaciones")]
+        public async Task<IActionResult> RealizarDonacion([FromBody] RequestDonacionDto donacionDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Solicitud de registro no válida");
+            }
+
+            var response = await _userService.CreacionDonacionAsync(donacionDto);
+
+            if (response.respuesta == 1)
+            {
+                return Ok("Creación de usuario exitosa");
+            }
+
+            return BadRequest("Error en la creación de usuario");
+        }
+
+        [HttpPost("/adopciones")]
+        public async Task<IActionResult> RealizarAdopcion([FromBody] RequestAdopcionDto adopcionDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Solicitud de registro no válida");
+            }
+
+            var response = await _userService.CreacionAdopcionAsync(adopcionDto);
+
+            if (response.respuesta == 1)
+            {
+                return Ok("Creación de usuario exitosa");
+            }
+
+            return BadRequest("Error en la creación de usuario");
+        }
+
+
 
 
     }

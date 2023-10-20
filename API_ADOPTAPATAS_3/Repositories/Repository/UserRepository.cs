@@ -86,5 +86,95 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
             }
         }
 
+        public async Task<bool> RealizarDonacionAsync(RequestDonacionDto donacionDto)
+        {
+            using (var _dbContext = new BdadoptapatasContext())
+            {
+                // Buscar el canino por nombre, edad y raza
+                var canino = await _dbContext.Caninos.FirstOrDefaultAsync(c =>
+                    c.Nombre == donacionDto.NombreCanino &&
+                    c.Edad == donacionDto.EdadCanino &&
+                    c.Raza == donacionDto.RazaCanino);
+
+                if (canino == null)
+                {
+                    // Manejar la situación en la que el canino no se encontró (por ejemplo, lanzar una excepción)
+                    return false; // No se pudo encontrar el canino
+                }
+
+                // Buscar al usuario por nombre
+                var usuario = await _dbContext.Usuarios.FirstOrDefaultAsync(u => 
+                u.Nombre == donacionDto.NombreUsuario &&
+                u.Correo == donacionDto.CorreoUsuario
+                );
+
+                if (usuario == null)
+                {
+                    // Manejar la situación en la que el usuario no se encontró (por ejemplo, lanzar una excepción)
+                    return false; // No se pudo encontrar el usuario
+                }
+
+                // Crear una entidad de donación y asignar valores
+                var nuevaDonacion = new Donacion
+                {
+                    FechaDonacion = donacionDto.FechaDonacion,
+                    Monto = donacionDto.Monto,
+                    FkCanino = canino.IdCanino,
+                    FkUsuario = usuario.IdUsuario
+                };
+
+                _dbContext.Donacions.Add(nuevaDonacion);
+
+                await _dbContext.SaveChangesAsync();
+
+                return true; // Donación realizada con éxito
+            }
+        }
+
+        public async Task<bool> RealizarAdopcionAsync(RequestAdopcionDto adopcionDto)
+        {
+            using (var _dbContext = new BdadoptapatasContext())
+            {
+                // Buscar el canino por nombre, edad y raza
+                var canino = await _dbContext.Caninos.FirstOrDefaultAsync(c =>
+                    c.Nombre == adopcionDto.NombreCanino &&
+                    c.Edad == adopcionDto.EdadCanino &&
+                    c.Raza == adopcionDto.RazaCanino);
+
+                if (canino == null)
+                {
+                    // Manejar la situación en la que el canino no se encontró (por ejemplo, lanzar una excepción)
+                    return false; // No se pudo encontrar el canino
+                }
+
+                // Buscar al usuario por nombre
+                var usuario = await _dbContext.Usuarios.FirstOrDefaultAsync(u =>
+               u.Nombre == adopcionDto.NombreUsuario &&
+               u.Correo == adopcionDto.CorreoUsuario
+               );
+
+                if (usuario == null)
+                {
+                    // Manejar la situación en la que el usuario no se encontró (por ejemplo, lanzar una excepción)
+                    return false; // No se pudo encontrar el usuario
+                }
+
+                // Crear una entidad de adopción y asignar valores
+                var nuevaAdopcion = new Adopcion
+                {
+                    FechaAdopcion = adopcionDto.FechaAdopcion,
+                    FkCanino = canino.IdCanino,
+                    FkUsuario = usuario.IdUsuario
+                };
+
+                _dbContext.Adopcions.Add(nuevaAdopcion);
+
+                await _dbContext.SaveChangesAsync();
+
+                return true; // Adopción realizada con éxito
+            }
+        }
+
+
     }
 }

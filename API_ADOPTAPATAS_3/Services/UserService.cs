@@ -69,6 +69,67 @@ namespace API_ADOPTAPATAS_3.Services
             return responseGeneric;
         }
 
+        public async Task<ResponseGeneric> CreacionDonacionAsync(RequestDonacionDto donacionDto)
+        {
+            ResponseGeneric responseGeneric = new ResponseGeneric();
+
+            try
+            {
+                if (await _UserRepository.RealizarDonacionAsync(donacionDto))
+                {
+                    responseGeneric.respuesta = 1;
+                    responseGeneric.mensaje = "Creación de Donacion Exitoso";
+                }
+                else
+                {
+                    responseGeneric.respuesta = 0;
+                    responseGeneric.mensaje = "Error en la creación de la donacion";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Manejar la excepción apropiadamente (por ejemplo, registrarla o propagarla)
+                Console.WriteLine("Error: " + ex.Message);
+
+                // Devolver una respuesta detallada sobre el error
+                responseGeneric.respuesta = 0;
+                responseGeneric.mensaje = "Error en la: " + ex.Message;
+            }
+
+            return responseGeneric;
+        }
+
+        public async Task<ResponseGeneric> CreacionAdopcionAsync(RequestAdopcionDto adopcionDto)
+        {
+            ResponseGeneric responseGeneric = new ResponseGeneric();
+
+            try
+            {
+                if (await _UserRepository.RealizarAdopcionAsync(adopcionDto))
+                {
+                    responseGeneric.respuesta = 1;
+                    responseGeneric.mensaje = "Creación de Adopcion exitoso";
+                }
+                else
+                {
+                    responseGeneric.respuesta = 0;
+                    responseGeneric.mensaje = "Error en la creación de la adopcion";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Manejar la excepción apropiadamente (por ejemplo, registrarla o propagarla)
+                Console.WriteLine("Error en: " + ex.Message);
+
+                // Devolver una respuesta detallada sobre el error
+                responseGeneric.respuesta = 0;
+                responseGeneric.mensaje = "Error en: " + ex.Message;
+            }
+
+            return responseGeneric;
+        }
+
+
     }
 
 }
