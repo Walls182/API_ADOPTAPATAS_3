@@ -1,4 +1,5 @@
-﻿using API_ADOPTAPATAS_3.Dtos;
+﻿using API_ADOPTAPATAS_3.Dtos.DtoUser;
+using API_ADOPTAPATAS_3.Dtos.RequestUser;
 using API_ADOPTAPATAS_3.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,7 @@ namespace API_ADOPTAPATAS_3.UserController
         }
 
         [HttpPost("/login")]
-        public async Task<IActionResult> InicioSesion([FromBody] RequestLoginDto request)
+        public async Task<IActionResult> InicioSesion([FromBody] ReqLoginDto request)
         {
            
 
@@ -40,7 +41,7 @@ namespace API_ADOPTAPATAS_3.UserController
         }
 
         [HttpPost("/registro")]
-        public async Task<IActionResult> RegistroUsuario([FromBody] RequestRegisterDto registroDto)
+        public async Task<IActionResult> RegistroUsuario([FromBody] ReqRegisterDto registroDto)
         {
             
 
@@ -60,7 +61,7 @@ namespace API_ADOPTAPATAS_3.UserController
         }
 
         [HttpPost("/donaciones")]
-        public async Task<IActionResult> RealizarDonacion([FromBody] RequestDonacionDto donacionDto)
+        public async Task<IActionResult> RealizarDonacion([FromBody] ReqDonacionDto donacionDto)
         {
             if (!ModelState.IsValid)
             {
@@ -78,7 +79,7 @@ namespace API_ADOPTAPATAS_3.UserController
         }
 
         [HttpPost("/adopciones")]
-        public async Task<IActionResult> RealizarAdopcion([FromBody] RequestAdopcionDto adopcionDto)
+        public async Task<IActionResult> RealizarAdopcion([FromBody] ReqAdopcionDto adopcionDto)
         {
             if (!ModelState.IsValid)
             {

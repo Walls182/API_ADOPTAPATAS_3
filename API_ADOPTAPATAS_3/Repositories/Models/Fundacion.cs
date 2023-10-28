@@ -35,5 +35,17 @@ public partial class Fundacion
 
     public string? FotoFundacion { get; set; }
 
+    public int? IdLogin { get; set; }
+
+    public int? IdRol { get; set; }
+
+    public int? IdEstado { get; set; }
+
     public virtual ICollection<Canino> Caninos { get; set; } = new List<Canino>();
+
+    public virtual Estado? IdEstadoNavigation { get; set; }
+
+    public virtual Login? IdLoginNavigation { get; set; }
+
+    public virtual Rol? IdRolNavigation { get; set; }
 }

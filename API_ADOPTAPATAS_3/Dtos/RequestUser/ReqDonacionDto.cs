@@ -1,8 +1,11 @@
-﻿namespace API_ADOPTAPATAS_3.Dtos
+﻿namespace API_ADOPTAPATAS_3.Dtos.RequestUser
 {
-    public class RequestAdopcionDto
+    public class ReqDonacionDto
     {
-        public DateTime? FechaAdopcion { get; set; }
+        public DateTime? FechaDonacion { get; set; }
+
+        public decimal? Monto { get; set; }
+
         public string? NombreCanino { get; set; }
         public int? EdadCanino { get; set; }
 
@@ -10,5 +13,7 @@
         public string? NombreUsuario { get; set; }
 
         public string? CorreoUsuario { get; set; }
+
+
     }
 }

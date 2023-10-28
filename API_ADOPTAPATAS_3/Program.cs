@@ -1,4 +1,5 @@
 using API_ADOPTAPATAS_3.Dtos;
+using API_ADOPTAPATAS_3.Dtos.Responses;
 using API_ADOPTAPATAS_3.Repositories.Models;
 using API_ADOPTAPATAS_3.Repositories.Repository;
 using API_ADOPTAPATAS_3.Services;
@@ -16,7 +17,8 @@ builder.Services.AddDbContext<BdadoptapatasContext>(opciones => opciones.UseSqlS
 // add services
 builder.Services.AddScoped<UserService, UserService>();
 
-// add repositories
+// add repositories.... No olvidar poner los repositorios y servicios
+
 builder.Services.AddScoped<UserRepository, UserRepository>();
 
 // Add Automapper settings

@@ -168,6 +168,9 @@ public partial class BdadoptapatasContext : DbContext
             entity.Property(e => e.FotoFundacion)
                 .HasMaxLength(255)
                 .HasColumnName("fotoFundacion");
+            entity.Property(e => e.IdEstado).HasColumnName("idEstado");
+            entity.Property(e => e.IdLogin).HasColumnName("idLogin");
+            entity.Property(e => e.IdRol).HasColumnName("idRol");
             entity.Property(e => e.LogoFundacion)
                 .HasMaxLength(255)
                 .HasColumnName("logoFundacion");
@@ -186,6 +189,21 @@ public partial class BdadoptapatasContext : DbContext
                 .HasMaxLength(20)
                 .HasColumnName("telefono");
             entity.Property(e => e.Vision).HasColumnName("vision");
+
+            entity.HasOne(d => d.IdEstadoNavigation).WithMany(p => p.Fundacions)
+                .HasForeignKey(d => d.IdEstado)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Fundacion_Estado");
+
+            entity.HasOne(d => d.IdLoginNavigation).WithMany(p => p.Fundacions)
+                .HasForeignKey(d => d.IdLogin)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Fundacion_Login");
+
+            entity.HasOne(d => d.IdRolNavigation).WithMany(p => p.Fundacions)
+                .HasForeignKey(d => d.IdRol)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_Fundacion_Rol");
         });
 
         modelBuilder.Entity<Login>(entity =>

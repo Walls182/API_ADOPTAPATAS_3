@@ -1,4 +1,5 @@
-﻿using API_ADOPTAPATAS_3.Dtos;
+﻿using API_ADOPTAPATAS_3.Dtos.DtoUser;
+using API_ADOPTAPATAS_3.Dtos.RequestUser;
 using API_ADOPTAPATAS_3.Repositories.Models;
 using API_ADOPTAPATAS_3.Utility;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
 {
     public class UserRepository
     {
-        public async Task<bool> ValidarUsuarioAsync(RequestLoginDto loginDto)
+        public async Task<bool> ValidarUsuarioAsync(ReqLoginDto loginDto)
         {
             Encrip _encrip = new Encrip();
             using (var _dbContext = new BdadoptapatasContext())
@@ -25,7 +26,7 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
                 }
             }
         }
-        public async Task<bool> RegistrarUsuarioAsync(RequestRegisterDto registerDto)
+        public async Task<bool> RegistrarUsuarioAsync(ReqRegisterDto registerDto)
         {
             Encrip _encrip = new Encrip();
             using (var _dbContext = new BdadoptapatasContext())
@@ -86,7 +87,7 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
             }
         }
 
-        public async Task<bool> RealizarDonacionAsync(RequestDonacionDto donacionDto)
+        public async Task<bool> RealizarDonacionAsync(ReqDonacionDto donacionDto)
         {
             using (var _dbContext = new BdadoptapatasContext())
             {
@@ -127,11 +128,11 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
 
                 await _dbContext.SaveChangesAsync();
 
-                return true; // Donación realizada con éxito
+                return true; // Donación guardada con éxito
             }
         }
 
-        public async Task<bool> RealizarAdopcionAsync(RequestAdopcionDto adopcionDto)
+        public async Task<bool> RealizarAdopcionAsync(ReqAdopcionDto adopcionDto)
         {
             using (var _dbContext = new BdadoptapatasContext())
             {

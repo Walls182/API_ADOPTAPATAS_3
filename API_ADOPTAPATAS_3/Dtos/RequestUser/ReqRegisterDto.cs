@@ -1,6 +1,6 @@
-﻿namespace API_ADOPTAPATAS_3.Dtos
+﻿namespace API_ADOPTAPATAS_3.Dtos.RequestUser
 {
-    public class RequestRegisterDto
+    public class ReqRegisterDto
     {
 
         public string? Nombre { get; set; }

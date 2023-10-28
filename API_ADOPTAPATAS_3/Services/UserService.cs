@@ -1,4 +1,6 @@
-﻿using API_ADOPTAPATAS_3.Dtos;
+﻿using API_ADOPTAPATAS_3.Dtos.DtoUser;
+using API_ADOPTAPATAS_3.Dtos.RequestUser;
+using API_ADOPTAPATAS_3.Dtos.Responses;
 using API_ADOPTAPATAS_3.Repositories.Repository;
 using API_ADOPTAPATAS_3.Utility;
 
@@ -18,7 +20,7 @@ namespace API_ADOPTAPATAS_3.Services
             _UserRepository = userRepository;
         }
 
-        public async Task<ResponseLoginDto> InicioSesionAsync(RequestLoginDto requestLoginDto)
+        public async Task<ResponseLoginDto> InicioSesionAsync(ReqLoginDto requestLoginDto)
         {
             ResponseLoginDto responseLoginDto = new ResponseLoginDto();
 
@@ -39,7 +41,7 @@ namespace API_ADOPTAPATAS_3.Services
             return responseLoginDto;
         }
 
-        public async Task<ResponseGeneric> CreacionUsuarioAsync(RequestRegisterDto requestRegister)
+        public async Task<ResponseGeneric> CreacionUsuarioAsync(ReqRegisterDto requestRegister)
         {
             ResponseGeneric responseGeneric = new ResponseGeneric();
 
@@ -68,8 +70,8 @@ namespace API_ADOPTAPATAS_3.Services
 
             return responseGeneric;
         }
-
-        public async Task<ResponseGeneric> CreacionDonacionAsync(RequestDonacionDto donacionDto)
+        //-------------------------------Dejada por el momento en usuarios
+        public async Task<ResponseGeneric> CreacionDonacionAsync(ReqDonacionDto donacionDto)
         {
             ResponseGeneric responseGeneric = new ResponseGeneric();
 
@@ -98,8 +100,8 @@ namespace API_ADOPTAPATAS_3.Services
 
             return responseGeneric;
         }
-
-        public async Task<ResponseGeneric> CreacionAdopcionAsync(RequestAdopcionDto adopcionDto)
+        //-------------------------------Dejada por el momento en usuarios
+        public async Task<ResponseGeneric> CreacionAdopcionAsync(ReqAdopcionDto adopcionDto)
         {
             ResponseGeneric responseGeneric = new ResponseGeneric();
 

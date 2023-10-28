@@ -9,5 +9,7 @@ public partial class Estado
 
     public string? DescripEstado { get; set; }
 
+    public virtual ICollection<Fundacion> Fundacions { get; set; } = new List<Fundacion>();
+
     public virtual ICollection<Usuario> Usuarios { get; set; } = new List<Usuario>();
 }
