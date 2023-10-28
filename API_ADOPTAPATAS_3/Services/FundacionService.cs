@@ -12,7 +12,7 @@ namespace API_ADOPTAPATAS_3.Services
         {
             _FundacionRepository = fundacionRepository;
         }
-        public async Task<ResponseBuscarCanino> BuscarCaninoAsync(ReqBuscarCaninoDto find)
+        public async Task<ResponseBuscarCaninoDto> FindCaninoAsync(ReqBuscarCaninoDto find)
         {
             try
             {
@@ -20,7 +20,7 @@ namespace API_ADOPTAPATAS_3.Services
 
                 if (Canino != null)
                 {
-                    return new ResponseBuscarCanino
+                    return new ResponseBuscarCaninoDto
                     {
                         respuesta = 1,
                         mensaje = "Búsqueda exitosa",
@@ -38,7 +38,7 @@ namespace API_ADOPTAPATAS_3.Services
                 }
                 else
                 {
-                    return new ResponseBuscarCanino
+                    return new ResponseBuscarCaninoDto
                     {
                         respuesta = 0,
                         mensaje = "Canino no encontrado"
@@ -53,7 +53,7 @@ namespace API_ADOPTAPATAS_3.Services
                 throw;
             }
         }
-        public async Task<ResponseGeneric> CreacionCaninoAsync(ReqCrearCaninoDto reqCrearCaninoDto)
+        public async Task<ResponseGeneric> CreateCaninoAsync(ReqCrearCaninoDto reqCrearCaninoDto)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace API_ADOPTAPATAS_3.Services
                 };
             }
         }
-        public async Task<ResponseGeneric> ActualizarCaninoAsync(ReqActualizarCaninoDto respActualizarCaninoDto)
+        public async Task<ResponseGeneric> UpdateCaninoAsync(ReqActualizarCaninoDto respActualizarCaninoDto)
         {
             try
             {
@@ -109,13 +109,43 @@ namespace API_ADOPTAPATAS_3.Services
 
 
         }
-       /*
-        * 
-        * Preguntar como puedo devolver una lista de todos los caninos en la bd
-        * 
-        * public async Task<ResponseListaCaninosDto> ListarCaninos()
+
+        public async Task<ResponseGeneric> UpdateDispoAsync (ReqDisponibilidadDto reqDisponibilidadDto)
         {
-         
-        }*/
+            try
+            {
+                var registroExitoso = await _FundacionRepository.ActualizarDisponibilidad(reqDisponibilidadDto);
+
+                return new ResponseGeneric
+                {
+                    respuesta = registroExitoso ? 1 : 0,
+                    mensaje = registroExitoso ? "Actualizacion de usuario exitosa" : "Error en la actualizacion de usuario"
+                };
+            }
+            catch (Exception ex)
+            {
+                // Manejar la excepción apropiadamente (por ejemplo, registrarla o propagarla)
+                Console.WriteLine("Error en Actualizacion Usuario: " + ex.Message);
+
+                // Devolver una respuesta detallada sobre el error
+                return new ResponseGeneric
+                {
+                    respuesta = 0,
+                    mensaje = "Error en la actualizacion de usuario: " + ex.Message
+                };
+            }
+        }
+        /*
+       ------------
+       * 
+       * Preguntar como puedo devolver una lista de todos los caninos en la bd
+       * 
+       * public async Task<ResponseListaCaninosDto> ListarCaninos()
+       {
+
+       }
+
+
+        */
     }
 }

@@ -1,4 +1,5 @@
 ﻿using API_ADOPTAPATAS_3.Dtos.RequestCanino;
+using API_ADOPTAPATAS_3.Dtos.Responses;
 using API_ADOPTAPATAS_3.Repositories.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -97,31 +98,24 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
 
             return caninosDisponibles;
         }
-        public async Task<List<Canino>> ObtenerCaninosPorFundacionAsync(int idFundacion)
+        public async Task<List<Canino>> ObtenerCaninosPorFundacionAsync(ReqIdFunDto idFundacion)
         {
             // Realiza una consulta para obtener todos los caninos asociados a una fundación específica
             var caninosPorFundacion = await _dbContext.Caninos
-                .Where(c => c.FkFundacion == idFundacion)
+                .Where(c => c.FkFundacion == idFundacion.IdFundacion)
                 .ToListAsync();
 
             return caninosPorFundacion;
         }
-        public async Task<bool> ActualizarDisponibilidadPorFundacion(int idFundacion, bool nuevaDisponibilidad)
+        public async Task<bool> ActualizarDisponibilidad(ReqDisponibilidadDto reqDisponibilidadDto)
         {
             // Realiza una consulta para seleccionar los caninos de la fundación específica
-            var caninosPorFundacion = await _dbContext.Caninos
-                .Where(c => c.FkFundacion == idFundacion)
-                .ToListAsync();
-
-            if (caninosPorFundacion.Count == 0)
-            {
-                return false; // No se encontraron caninos para la fundación
-            }
+            var caninos = _dbContext.Caninos.Where(c => c.IdCanino == reqDisponibilidadDto.IdCanino);
 
             // Actualiza la disponibilidad para los caninos seleccionados
-            foreach (var canino in caninosPorFundacion)
+            foreach (var canino in caninos)
             {
-                canino.Disponibilidad = nuevaDisponibilidad;
+                canino.Disponibilidad = reqDisponibilidadDto.Disponibilidad;
             }
 
             // Guarda los cambios en la base de datos
@@ -129,6 +123,7 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
 
             return true; // Actualización exitosa de la disponibilidad
         }
+
 
 
 
