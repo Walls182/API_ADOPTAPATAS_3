@@ -21,5 +21,7 @@
         public bool? Vacunas { get; set; }
 
         public bool? Disponibilidad { get; set; }
+        public int? FkFundacion { get; set; }
+
     }
 }

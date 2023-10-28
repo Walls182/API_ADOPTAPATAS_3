@@ -43,20 +43,15 @@ namespace API_ADOPTAPATAS_3.Services
 
         public async Task<ResponseGeneric> CreacionUsuarioAsync(ReqRegisterDto requestRegister)
         {
-            ResponseGeneric responseGeneric = new ResponseGeneric();
-
             try
             {
-                if (await _UserRepository.RegistrarUsuarioAsync(requestRegister))
+                var registroExitoso = await _UserRepository.RegistrarUsuarioAsync(requestRegister);
+
+                return new ResponseGeneric
                 {
-                    responseGeneric.respuesta = 1;
-                    responseGeneric.mensaje = "Creación de usuario Exitoso";
-                }
-                else
-                {
-                    responseGeneric.respuesta = 0;
-                    responseGeneric.mensaje = "Error en la creación de usuario";
-                }
+                    respuesta = registroExitoso ? 1 : 0,
+                    mensaje = registroExitoso ? "Creación de usuario exitosa" : "Error en la creación de usuario"
+                };
             }
             catch (Exception ex)
             {
@@ -64,12 +59,14 @@ namespace API_ADOPTAPATAS_3.Services
                 Console.WriteLine("Error en CreacionUsuario: " + ex.Message);
 
                 // Devolver una respuesta detallada sobre el error
-                responseGeneric.respuesta = 0;
-                responseGeneric.mensaje = "Error en la creación de usuario: " + ex.Message;
+                return new ResponseGeneric
+                {
+                    respuesta = 0,
+                    mensaje = "Error en la creación de usuario: " + ex.Message
+                };
             }
-
-            return responseGeneric;
         }
+
         //-------------------------------Dejada por el momento en usuarios
         public async Task<ResponseGeneric> CreacionDonacionAsync(ReqDonacionDto donacionDto)
         {

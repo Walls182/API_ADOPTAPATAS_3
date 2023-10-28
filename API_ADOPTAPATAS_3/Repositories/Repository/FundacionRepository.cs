@@ -41,31 +41,34 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
             // Devuelve el canino encontrado
             return canino;
         }
-        public async Task<bool> CrearCaninoAsync(ReqCrearCaninoDto mascotaDto)
+        public async Task<bool> CrearCaninoAsync(ReqCrearCaninoDto caninoDto)
         {
-
-            // Verificar si el nombre de usuario ya existe
-            if (await ExistCanino(mascotaDto) == true)
+            // Verificar si el canino ya existe
+            if (await ExistCanino(caninoDto))
             {
                 return false; // Canino existe
             }
 
             var nuevaMascota = new Canino
             {
-                Nombre = mascotaDto.Nombre,
-                Edad = mascotaDto.Edad,
-                Raza = mascotaDto.Raza,
-                Descripcion = mascotaDto.Descripcion,
-
-                // Otras propiedades de la mascota
+                Nombre = caninoDto.Nombre,
+                Edad = caninoDto.Edad,
+                Raza = caninoDto.Raza,
+                Descripcion = caninoDto.Descripcion,
+                Imagen = caninoDto.Imagen,
+                EstadoSalud = caninoDto.EstadoSalud,
+                Temperamento = caninoDto.Temperamento,
+                Vacunas = caninoDto.Vacunas,
+                Disponibilidad = caninoDto.Disponibilidad,
+                FkFundacion = caninoDto.FkFundacion
             };
 
             _dbContext.Caninos.Add(nuevaMascota);
-
             await _dbContext.SaveChangesAsync();
 
             return true; // Creación exitosa de la mascota
         }
+
         public async Task<bool> ActualizarCaninoAsync(ReqActualizarCaninoDto mascotaDto)
         {
             // Buscar el canino en la base de datos por su ID
@@ -76,26 +79,15 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
                 return false; // El canino no se encontró, la actualización no es posible
             }
 
-            // Realizar las actualizaciones en las propiedades del canino
-            canino.Nombre = mascotaDto.Nombre;
-            canino.Edad = mascotaDto.Edad;
-            canino.Raza = mascotaDto.Raza;
-            canino.Descripcion = mascotaDto.Descripcion;
-            canino.Imagen = mascotaDto.Imagen;
-            canino.EstadoSalud = mascotaDto.EstadoSalud;
-            canino.Temperamento = mascotaDto.Temperamento;
-            canino.Vacunas = mascotaDto.Vacunas;
-            canino.Disponibilidad = mascotaDto.Disponibilidad;
-
-
-
-            // Puedes realizar otras actualizaciones en las propiedades del canino aquí
+            // Actualizar el canino con las propiedades del DTO
+            _dbContext.Entry(canino).CurrentValues.SetValues(mascotaDto);
 
             // Guardar los cambios en la base de datos
             await _dbContext.SaveChangesAsync();
 
             return true; // Actualización exitosa del canino
         }
+
         public async Task<List<Canino>> ObtenerCaninosDisponiblesAsync()
         {
             // Realiza una consulta para obtener todos los caninos con disponibilidad en true
