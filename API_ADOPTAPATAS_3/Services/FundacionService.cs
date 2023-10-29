@@ -135,17 +135,13 @@ namespace API_ADOPTAPATAS_3.Services
                 };
             }
         }
-        /*
-       ------------
-       * 
-       * Preguntar como puedo devolver una lista de todos los caninos en la bd
-       * 
-       * public async Task<ResponseListaCaninosDto> ListarCaninos()
+      
+       /* public async Task <List<ResponseListaCaninosDto>> ListarCaninos()
        {
 
        }
+       */
 
-
-        */
+      
     }
 }
