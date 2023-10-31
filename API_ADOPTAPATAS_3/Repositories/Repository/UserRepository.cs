@@ -10,22 +10,25 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
     {
         public async Task<bool> ValidarUsuarioAsync(ReqLoginDto loginDto)
         {
-            Encrip _encrip = new Encrip();
             using (var _dbContext = new BdadoptapatasContext())
             {
-                var passs = _encrip.HashPassword(loginDto.Contrasena);
                 var usuario = await _dbContext.Logins.FirstOrDefaultAsync(u => u.Usuario == loginDto.Usuario);
 
-                if (usuario == null || usuario.Contrasena != passs)
+                if (usuario == null)
                 {
-                    return false;
+                    return false; // El usuario no existe
                 }
-                else
+
+                Encrip _encrip = new Encrip();
+                if (!_encrip.VerifyPassword(loginDto.Contrasena, usuario.Contrasena))
                 {
-                    return true;
+                    return false; // Contraseña incorrecta
                 }
+
+                return true; // Usuario y contraseña válidos
             }
         }
+
         public async Task<bool> RegistrarUsuarioAsync(ReqRegisterDto registerDto)
         {
             Encrip _encrip = new Encrip();

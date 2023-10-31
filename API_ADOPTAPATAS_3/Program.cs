@@ -64,6 +64,16 @@ builder.Services.AddAuthentication(option =>
         };
     }
 });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",  // dejarlo en "AllowAnyOrigin" para cualquier origen
+        builder =>
+        {
+            builder.WithOrigins("https://example.com") // Reemplaza aqui los link de la pagina de adoptapatas
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+        });
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -76,6 +86,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("AllowSpecificOrigin");   // dejarlo en "AllowAnyOrigin" si se configura en cualquier origen
 
 app.UseHttpsRedirection();
 

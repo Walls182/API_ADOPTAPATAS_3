@@ -7,13 +7,13 @@ namespace API_ADOPTAPATAS_3.Utility
     {
         public string HashPassword(string password)
         {
-            using (SHA512 sha212 = SHA512.Create())
+            using (SHA512 sha512 = SHA512.Create())
             {
                 // Convierte la contraseña en bytes
                 byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
 
                 // Calcula el hash SHA-512
-                byte[] hashBytes = sha212.ComputeHash(passwordBytes);
+                byte[] hashBytes = sha512.ComputeHash(passwordBytes);
 
                 // Convierte el hash en una representación hexadecimal
                 StringBuilder builder = new StringBuilder();
@@ -26,6 +26,13 @@ namespace API_ADOPTAPATAS_3.Utility
             }
         }
 
+        public bool VerifyPassword(string enteredPassword, string storedPasswordHash)
+        {
+            // Calcular el hash de la contraseña proporcionada
+            string enteredPasswordHash = HashPassword(enteredPassword);
 
+            // Comparar los hashes para verificar la contraseña
+            return string.Equals(enteredPasswordHash, storedPasswordHash);
+        }
     }
 }
