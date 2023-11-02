@@ -8,26 +8,39 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
 {
     public class UserRepository
     {
-        public async Task<bool> ValidarUsuarioAsync(ReqLoginDto loginDto)
+        public async Task<int?> ObtenerIdRolUsuarioAsync(ReqLoginDto loginDto)
         {
             using (var _dbContext = new BdadoptapatasContext())
             {
-                var usuario = await _dbContext.Logins.FirstOrDefaultAsync(u => u.Usuario == loginDto.Usuario);
+                var login = await _dbContext.Logins.FirstOrDefaultAsync(u => u.Usuario == loginDto.Usuario);
 
-                if (usuario == null)
+                if (login == null)
                 {
-                    return false; // El usuario no existe
+                    return null; // El usuario no existe, por lo que no se puede obtener el IdRol
                 }
 
                 Encrip _encrip = new Encrip();
-                if (!_encrip.VerifyPassword(loginDto.Contrasena, usuario.Contrasena))
+                if (!_encrip.VerifyPassword(loginDto.Contrasena, login.Contrasena))
                 {
-                    return false; // Contraseña incorrecta
+                    return null; // Contraseña incorrecta, no se puede obtener el IdRol
                 }
 
-                return true; // Usuario y contraseña válidos
+                var usuario = await _dbContext.Usuarios.FirstOrDefaultAsync(u => u.FkLogin == login.IdLogin);
+
+                if (usuario == null)
+                {
+                    return null; // No se pudo encontrar el usuario asociado al login
+                }
+
+                return usuario.FkRol; // Usuario y contraseña válidos, devuelve el IdRol
             }
         }
+
+
+
+
+
+
 
         public async Task<bool> RegistrarUsuarioAsync(ReqRegisterDto registerDto)
         {
@@ -46,15 +59,9 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
                     Contrasena = _encrip.HashPassword(registerDto.Contrasena)
                 };
 
-                var nuevoRol = new Rol
-                {
-                    Nombre = "Normal"
-                };
+              
 
-                var nuevoEstado = new Estado
-                {
-                    DescripEstado = "Activo"
-                };
+              
 
                 // Crear una entidad de usuario y asignar valores
                 var nuevoUsuario = new Usuario
@@ -66,12 +73,12 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
                     Direccion = registerDto.Direccion,
                     Municipio = registerDto.Municipio,
                     Departamento = registerDto.Departamento
+                    
                 };
 
                 // Establecer relaciones
                 _dbContext.Logins.Add(nuevaCredencial);
-                _dbContext.Rols.Add(nuevoRol);
-                _dbContext.Estados.Add(nuevoEstado);
+                
 
                 await _dbContext.SaveChangesAsync();
 
@@ -79,8 +86,7 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
                 var idLogin = nuevaCredencial.IdLogin;
 
                 nuevoUsuario.FkLogin = idLogin;
-                nuevoUsuario.FkRol = nuevoRol.IdRol;
-                nuevoUsuario.FkEstado = nuevoEstado.IdEstado;
+            
 
                 _dbContext.Usuarios.Add(nuevoUsuario);
 

@@ -27,9 +27,13 @@ public partial class Canino
 
     public int? FkFundacion { get; set; }
 
+    public int? FkEstado { get; set; }
+
     public virtual ICollection<Adopcion> Adopcions { get; set; } = new List<Adopcion>();
 
     public virtual ICollection<Donacion> Donacions { get; set; } = new List<Donacion>();
+
+    public virtual Estado? FkEstadoNavigation { get; set; }
 
     public virtual Fundacion? FkFundacionNavigation { get; set; }
 }

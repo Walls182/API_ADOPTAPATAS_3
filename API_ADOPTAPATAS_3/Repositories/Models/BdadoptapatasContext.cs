@@ -41,7 +41,7 @@ public partial class BdadoptapatasContext : DbContext
     {
         modelBuilder.Entity<Adopcion>(entity =>
         {
-            entity.HasKey(e => e.IdAdopcion).HasName("PK__Adopcion__210DF8AD3AF49EC2");
+            entity.HasKey(e => e.IdAdopcion).HasName("PK__Adopcion__210DF8ADA9F765B7");
 
             entity.ToTable("Adopcion");
 
@@ -54,16 +54,16 @@ public partial class BdadoptapatasContext : DbContext
 
             entity.HasOne(d => d.FkCaninoNavigation).WithMany(p => p.Adopcions)
                 .HasForeignKey(d => d.FkCanino)
-                .HasConstraintName("FK__Adopcion__fkCani__48CFD27E");
+                .HasConstraintName("FK__Adopcion__fkCani__4CA06362");
 
             entity.HasOne(d => d.FkUsuarioNavigation).WithMany(p => p.Adopcions)
                 .HasForeignKey(d => d.FkUsuario)
-                .HasConstraintName("FK__Adopcion__fkUsua__49C3F6B7");
+                .HasConstraintName("FK__Adopcion__fkUsua__4D94879B");
         });
 
         modelBuilder.Entity<Auditorium>(entity =>
         {
-            entity.HasKey(e => e.IdAuditoria).HasName("PK__Auditori__F1F30701AFE30CF2");
+            entity.HasKey(e => e.IdAuditoria).HasName("PK__Auditori__F1F307010EB89B65");
 
             entity.Property(e => e.IdAuditoria).HasColumnName("idAuditoria");
             entity.Property(e => e.Comentario).HasColumnName("comentario");
@@ -77,7 +77,7 @@ public partial class BdadoptapatasContext : DbContext
 
         modelBuilder.Entity<Canino>(entity =>
         {
-            entity.HasKey(e => e.IdCanino).HasName("PK__Canino__605AE19BCE98933F");
+            entity.HasKey(e => e.IdCanino).HasName("PK__Canino__605AE19B142FC62B");
 
             entity.ToTable("Canino");
 
@@ -88,10 +88,9 @@ public partial class BdadoptapatasContext : DbContext
             entity.Property(e => e.EstadoSalud)
                 .HasMaxLength(50)
                 .HasColumnName("estadoSalud");
+            entity.Property(e => e.FkEstado).HasColumnName("fkEstado");
             entity.Property(e => e.FkFundacion).HasColumnName("fkFundacion");
-            entity.Property(e => e.Imagen)
-                .HasMaxLength(255)
-                .HasColumnName("imagen");
+            entity.Property(e => e.Imagen).HasColumnName("imagen");
             entity.Property(e => e.Nombre)
                 .HasMaxLength(50)
                 .HasColumnName("nombre");
@@ -103,14 +102,18 @@ public partial class BdadoptapatasContext : DbContext
                 .HasColumnName("temperamento");
             entity.Property(e => e.Vacunas).HasColumnName("vacunas");
 
+            entity.HasOne(d => d.FkEstadoNavigation).WithMany(p => p.Caninos)
+                .HasForeignKey(d => d.FkEstado)
+                .HasConstraintName("FK__Canino__fkEstado__49C3F6B7");
+
             entity.HasOne(d => d.FkFundacionNavigation).WithMany(p => p.Caninos)
                 .HasForeignKey(d => d.FkFundacion)
-                .HasConstraintName("FK__Canino__fkFundac__45F365D3");
+                .HasConstraintName("FK__Canino__fkFundac__48CFD27E");
         });
 
         modelBuilder.Entity<Donacion>(entity =>
         {
-            entity.HasKey(e => e.IdDonacion).HasName("PK__Donacion__B260191716DD108A");
+            entity.HasKey(e => e.IdDonacion).HasName("PK__Donacion__B260191733FEE7CB");
 
             entity.ToTable("Donacion");
 
@@ -126,16 +129,16 @@ public partial class BdadoptapatasContext : DbContext
 
             entity.HasOne(d => d.FkCaninoNavigation).WithMany(p => p.Donacions)
                 .HasForeignKey(d => d.FkCanino)
-                .HasConstraintName("FK__Donacion__fkCani__4CA06362");
+                .HasConstraintName("FK__Donacion__fkCani__5070F446");
 
             entity.HasOne(d => d.FkUsuarioNavigation).WithMany(p => p.Donacions)
                 .HasForeignKey(d => d.FkUsuario)
-                .HasConstraintName("FK__Donacion__fkUsua__4D94879B");
+                .HasConstraintName("FK__Donacion__fkUsua__5165187F");
         });
 
         modelBuilder.Entity<Estado>(entity =>
         {
-            entity.HasKey(e => e.IdEstado).HasName("PK__Estado__62EA894A7B066574");
+            entity.HasKey(e => e.IdEstado).HasName("PK__Estado__62EA894ADFE48B58");
 
             entity.ToTable("Estado");
 
@@ -147,7 +150,7 @@ public partial class BdadoptapatasContext : DbContext
 
         modelBuilder.Entity<Fundacion>(entity =>
         {
-            entity.HasKey(e => e.IdFundacion).HasName("PK__Fundacio__70DC633B27025D39");
+            entity.HasKey(e => e.IdFundacion).HasName("PK__Fundacio__70DC633BAF8E5903");
 
             entity.ToTable("Fundacion");
 
@@ -165,15 +168,11 @@ public partial class BdadoptapatasContext : DbContext
             entity.Property(e => e.Direccion)
                 .HasMaxLength(255)
                 .HasColumnName("direccion");
-            entity.Property(e => e.FotoFundacion)
-                .HasMaxLength(255)
-                .HasColumnName("fotoFundacion");
-            entity.Property(e => e.IdEstado).HasColumnName("idEstado");
-            entity.Property(e => e.IdLogin).HasColumnName("idLogin");
-            entity.Property(e => e.IdRol).HasColumnName("idRol");
-            entity.Property(e => e.LogoFundacion)
-                .HasMaxLength(255)
-                .HasColumnName("logoFundacion");
+            entity.Property(e => e.FkEstado).HasColumnName("fkEstado");
+            entity.Property(e => e.FkLogin).HasColumnName("fkLogin");
+            entity.Property(e => e.FkRol).HasColumnName("fkRol");
+            entity.Property(e => e.FotoFundacion).HasColumnName("fotoFundacion");
+            entity.Property(e => e.LogoFundacion).HasColumnName("logoFundacion");
             entity.Property(e => e.Mision).HasColumnName("mision");
             entity.Property(e => e.Municipio)
                 .HasMaxLength(255)
@@ -190,25 +189,23 @@ public partial class BdadoptapatasContext : DbContext
                 .HasColumnName("telefono");
             entity.Property(e => e.Vision).HasColumnName("vision");
 
-            entity.HasOne(d => d.IdEstadoNavigation).WithMany(p => p.Fundacions)
-                .HasForeignKey(d => d.IdEstado)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_Fundacion_Estado");
+            entity.HasOne(d => d.FkEstadoNavigation).WithMany(p => p.Fundacions)
+                .HasForeignKey(d => d.FkEstado)
+                .HasConstraintName("FK__Fundacion__fkEst__45F365D3");
 
-            entity.HasOne(d => d.IdLoginNavigation).WithMany(p => p.Fundacions)
-                .HasForeignKey(d => d.IdLogin)
+            entity.HasOne(d => d.FkLoginNavigation).WithMany(p => p.Fundacions)
+                .HasForeignKey(d => d.FkLogin)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_Fundacion_Login");
+                .HasConstraintName("FK__Fundacion__fkLog__440B1D61");
 
-            entity.HasOne(d => d.IdRolNavigation).WithMany(p => p.Fundacions)
-                .HasForeignKey(d => d.IdRol)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_Fundacion_Rol");
+            entity.HasOne(d => d.FkRolNavigation).WithMany(p => p.Fundacions)
+                .HasForeignKey(d => d.FkRol)
+                .HasConstraintName("FK__Fundacion__fkRol__44FF419A");
         });
 
         modelBuilder.Entity<Login>(entity =>
         {
-            entity.HasKey(e => e.IdLogin).HasName("PK__Login__068B3EBB66C70282");
+            entity.HasKey(e => e.IdLogin).HasName("PK__Login__068B3EBB642B3F2A");
 
             entity.ToTable("Login");
 
@@ -223,7 +220,7 @@ public partial class BdadoptapatasContext : DbContext
 
         modelBuilder.Entity<Rol>(entity =>
         {
-            entity.HasKey(e => e.IdRol).HasName("PK__Rol__3C872F768DD6A330");
+            entity.HasKey(e => e.IdRol).HasName("PK__Rol__3C872F76FEE7AAB2");
 
             entity.ToTable("Rol");
 
@@ -235,7 +232,7 @@ public partial class BdadoptapatasContext : DbContext
 
         modelBuilder.Entity<Usuario>(entity =>
         {
-            entity.HasKey(e => e.IdUsuario).HasName("PK__Usuario__645723A675837CAA");
+            entity.HasKey(e => e.IdUsuario).HasName("PK__Usuario__645723A62B5C6E8C");
 
             entity.ToTable("Usuario");
 
@@ -267,18 +264,16 @@ public partial class BdadoptapatasContext : DbContext
 
             entity.HasOne(d => d.FkEstadoNavigation).WithMany(p => p.Usuarios)
                 .HasForeignKey(d => d.FkEstado)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK__Usuario__fkEstad__412EB0B6");
+                .HasConstraintName("FK__Usuario__fkEstad__3F466844");
 
             entity.HasOne(d => d.FkLoginNavigation).WithMany(p => p.Usuarios)
                 .HasForeignKey(d => d.FkLogin)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK__Usuario__fkLogin__3F466844");
+                .HasConstraintName("FK__Usuario__fkLogin__3D5E1FD2");
 
             entity.HasOne(d => d.FkRolNavigation).WithMany(p => p.Usuarios)
                 .HasForeignKey(d => d.FkRol)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK__Usuario__fkRol__403A8C7D");
+                .HasConstraintName("FK__Usuario__fkRol__3E52440B");
         });
 
         OnModelCreatingPartial(modelBuilder);

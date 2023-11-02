@@ -3,6 +3,8 @@ using API_ADOPTAPATAS_3.Dtos.RequestUser;
 using API_ADOPTAPATAS_3.Dtos.Responses;
 using API_ADOPTAPATAS_3.Repositories.Repository;
 using API_ADOPTAPATAS_3.Utility;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API_ADOPTAPATAS_3.Services
 {
@@ -24,22 +26,23 @@ namespace API_ADOPTAPATAS_3.Services
         {
             ResponseLoginDto responseLoginDto = new ResponseLoginDto();
 
-            if (await _UserRepository.ValidarUsuarioAsync(requestLoginDto))
+            var idRol = await _UserRepository.ObtenerIdRolUsuarioAsync(requestLoginDto);
+
+            if (idRol.HasValue) 
             {
-               
-               
                 responseLoginDto = JwtUtility.GenToken(responseLoginDto, _jwtSettings);
                 responseLoginDto.Respuesta = 1;
-                responseLoginDto.Mensaje = "Inicio Sesión Exitoso";
+                responseLoginDto.IdRol = idRol.Value; // Asignamos el IdRol
             }
             else
             {
                 responseLoginDto.Respuesta = 0;
-                responseLoginDto.Mensaje = "Inicio Sesión Erroneo, Usuario y/o Contraseña incorrectos";
+         
             }
 
             return responseLoginDto;
         }
+
 
         public async Task<ResponseGeneric> CreacionUsuarioAsync(ReqRegisterDto requestRegister)
         {
@@ -50,7 +53,7 @@ namespace API_ADOPTAPATAS_3.Services
                 return new ResponseGeneric
                 {
                     respuesta = registroExitoso ? 1 : 0,
-                    mensaje = registroExitoso ? "Creación de usuario exitosa" : "Error en la creación de usuario"
+  
                 };
             }
             catch (Exception ex)
@@ -62,12 +65,13 @@ namespace API_ADOPTAPATAS_3.Services
                 return new ResponseGeneric
                 {
                     respuesta = 0,
-                    mensaje = "Error en la creación de usuario: " + ex.Message
+            
                 };
             }
         }
 
         //-------------------------------Dejada por el momento en usuarios
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ResponseGeneric> CreacionDonacionAsync(ReqDonacionDto donacionDto)
         {
             ResponseGeneric responseGeneric = new ResponseGeneric();
@@ -98,6 +102,7 @@ namespace API_ADOPTAPATAS_3.Services
             return responseGeneric;
         }
         //-------------------------------Dejada por el momento en usuarios
+      
         public async Task<ResponseGeneric> CreacionAdopcionAsync(ReqAdopcionDto adopcionDto)
         {
             ResponseGeneric responseGeneric = new ResponseGeneric();

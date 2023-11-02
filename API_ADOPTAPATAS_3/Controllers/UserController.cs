@@ -1,6 +1,8 @@
 ﻿using API_ADOPTAPATAS_3.Dtos.DtoUser;
 using API_ADOPTAPATAS_3.Dtos.RequestUser;
 using API_ADOPTAPATAS_3.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +23,7 @@ namespace API_ADOPTAPATAS_3.UserController
         }
 
         [HttpPost("/login")]
+      
         public async Task<IActionResult> InicioSesion([FromBody] ReqLoginDto request)
         {
            
@@ -61,6 +64,7 @@ namespace API_ADOPTAPATAS_3.UserController
         }
 
         [HttpPost("/donaciones")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> RealizarDonacion([FromBody] ReqDonacionDto donacionDto)
         {
             if (!ModelState.IsValid)
@@ -79,6 +83,7 @@ namespace API_ADOPTAPATAS_3.UserController
         }
 
         [HttpPost("/adopciones")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> RealizarAdopcion([FromBody] ReqAdopcionDto adopcionDto)
         {
             if (!ModelState.IsValid)
