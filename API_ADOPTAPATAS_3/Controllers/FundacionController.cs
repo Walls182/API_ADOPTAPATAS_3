@@ -1,4 +1,4 @@
-﻿using API_ADOPTAPATAS_3.Dtos.RequestUser;
+﻿using API_ADOPTAPATAS_3.Dtos.RequestFundacion;
 using API_ADOPTAPATAS_3.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -11,9 +11,31 @@ namespace API_ADOPTAPATAS_3.Controllers
     [ApiController]
     public class FundacionController : ControllerBase
     {
-        
+        private readonly FundacionService _FundacionService;
+        public FundacionController(FundacionService fundacionService)
+        { 
+          _FundacionService = fundacionService;
+        }
 
-  
+        [HttpPost("/registroFundacion")]
+        public async Task<IActionResult> RegistroUsuario([FromBody] ReqRegistroFundDto registro)
+        {
+
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Solicitud de registro no válida");
+            }
+
+            var response = await _FundacionService.FundacionRegister(registro);
+
+            if (response.respuesta == 1)
+            {
+                return Ok("Creación de usuario exitosa");
+            }
+
+            return BadRequest("Error en la creación de usuario");
+        }
 
     }
 }

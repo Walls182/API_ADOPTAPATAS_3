@@ -58,11 +58,6 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
                     Usuario = registerDto.Usuario,
                     Contrasena = _encrip.HashPassword(registerDto.Contrasena)
                 };
-
-              
-
-              
-
                 // Crear una entidad de usuario y asignar valores
                 var nuevoUsuario = new Usuario
                 {
@@ -84,6 +79,9 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
 
                 // Obtener el IdLogin después de guardar los cambios
                 var idLogin = nuevaCredencial.IdLogin;
+                // Asignar idRol e idEstado
+                nuevoUsuario.FkRol = 1;
+                nuevoUsuario.FkEstado = 1; 
 
                 nuevoUsuario.FkLogin = idLogin;
             
@@ -159,15 +157,19 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
 
                 // Buscar al usuario por nombre
                 var usuario = await _dbContext.Usuarios.FirstOrDefaultAsync(u =>
-               u.Nombre == adopcionDto.NombreUsuario &&
-               u.Correo == adopcionDto.CorreoUsuario
-               );
+                    u.Nombre == adopcionDto.NombreUsuario &&
+                    u.Correo == adopcionDto.CorreoUsuario
+                );
 
                 if (usuario == null)
                 {
                     // Manejar la situación en la que el usuario no se encontró (por ejemplo, lanzar una excepción)
                     return false; // No se pudo encontrar el usuario
                 }
+
+                // Cambiar el estado de la mascota y la disponibilidad
+                canino.FkEstado = 2; // Asigna el estado correspondiente (ajusta el valor según tu base de datos)
+                canino.Disponibilidad = false; // Cambia la disponibilidad a false
 
                 // Crear una entidad de adopción y asignar valores
                 var nuevaAdopcion = new Adopcion
@@ -184,6 +186,7 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
                 return true; // Adopción realizada con éxito
             }
         }
+
 
 
     }

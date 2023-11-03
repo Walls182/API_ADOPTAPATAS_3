@@ -29,5 +29,6 @@
         public string? LogoFundacion { get; set; }
 
         public string? FotoFundacion { get; set; }
+
     }
 }

@@ -16,10 +16,15 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<BdadoptapatasContext>(opciones => opciones.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 // add services
 builder.Services.AddScoped<UserService, UserService>();
-
-// add repositories.... No olvidar poner los repositorios y servicios
+builder.Services.AddScoped<FundacionService, FundacionService>();
+// add repositories..
 
 builder.Services.AddScoped<UserRepository, UserRepository>();
+builder.Services.AddScoped<FundacionRepository, FundacionRepository>();
+
+
+
+
 
 // Add Automapper settings
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));

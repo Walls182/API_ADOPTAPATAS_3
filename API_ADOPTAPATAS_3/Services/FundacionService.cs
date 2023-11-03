@@ -1,5 +1,5 @@
 ﻿using API_ADOPTAPATAS_3.Dtos.RequestCanino;
-using API_ADOPTAPATAS_3.Dtos.RequestUser;
+using API_ADOPTAPATAS_3.Dtos.RequestFundacion;
 using API_ADOPTAPATAS_3.Dtos.Responses;
 using API_ADOPTAPATAS_3.Repositories.Repository;
 
@@ -8,9 +8,40 @@ namespace API_ADOPTAPATAS_3.Services
     public class FundacionService
     {
         private readonly FundacionRepository _FundacionRepository;
-        FundacionService(FundacionRepository fundacionRepository)
+        public FundacionService(FundacionRepository fundacionRepository)
         {
             _FundacionRepository = fundacionRepository;
+        }
+
+
+        public async Task<ResponseGeneric> FundacionRegister(ReqRegistroFundDto requestRegister)
+        {
+            try
+            {
+                var registroExitoso = await _FundacionRepository.RegistrarFundacionAsync(requestRegister);
+
+                return new ResponseGeneric
+                {
+                    respuesta = registroExitoso ? 1 : 0,
+
+                };
+            }
+            catch (Exception ex)
+            {
+                // Manejar la excepción apropiadamente (por ejemplo, registrarla o propagarla)
+                Console.WriteLine("Error en CreacionUsuario: " + ex.Message);
+
+                // Devolver una respuesta detallada sobre el error
+                return new ResponseGeneric
+                {
+                    respuesta = 0,
+
+                };
+            }
+
+
+
+
         }
         public async Task<ResponseBuscarCaninoDto> FindCaninoAsync(ReqBuscarCaninoDto find)
         {

@@ -1,6 +1,8 @@
 ﻿using API_ADOPTAPATAS_3.Dtos.RequestCanino;
+using API_ADOPTAPATAS_3.Dtos.RequestFundacion;
 using API_ADOPTAPATAS_3.Dtos.Responses;
 using API_ADOPTAPATAS_3.Repositories.Models;
+using API_ADOPTAPATAS_3.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +11,66 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
     public class FundacionRepository
     {
         BdadoptapatasContext _dbContext = new BdadoptapatasContext();
+
+        public async Task<bool> RegistrarFundacionAsync(ReqRegistroFundDto fundacion)
+        {
+            Encrip _encrip = new Encrip();
+            using (var _dbContext = new BdadoptapatasContext())
+            {
+                // Verificar si el nombre de fundación ya existe como nombre de usuario
+                if (await _dbContext.Logins.AnyAsync(u => u.Usuario == fundacion.NombreFundacion))
+                {
+                    return false; // Nombre de usuario duplicado
+                }
+                GenericPass genericPass = new GenericPass();
+                var autopass = genericPass.GenerateRandomPassword();
+                var nuevaCredencial = new Login
+                {
+                    Usuario = fundacion.NombreFundacion,
+                    Contrasena = _encrip.HashPassword(autopass) // Genera una contraseña aleatoria y la almacena con hash
+                };
+
+              
+           
+                var nuevaFundacion = new Fundacion
+                {
+                    NombreRepresentante = fundacion.NombreRepresentante,
+                    NombreFundacion = fundacion.NombreFundacion,
+                    Direccion = fundacion.Direccion,
+                    Municipio = fundacion.Municipio,
+                    Departamento = fundacion.Departamento,
+                    Correo = fundacion.Correo,
+                    Telefono = fundacion.Telefono,
+                    Celular = fundacion.Celular,
+                    Descripcion = fundacion.Descripcion,
+                    Mision = fundacion.Mision,
+                    Vision = fundacion.Vision,
+                    ObjetivoSocial = fundacion.ObjetivoSocial,
+                    LogoFundacion = fundacion.LogoFundacion,
+                    FotoFundacion = fundacion.FotoFundacion
+                };
+
+                // Establecer relaciones
+                _dbContext.Logins.Add(nuevaCredencial);
+                await _dbContext.SaveChangesAsync();
+
+                // Obtener el IdLogin después de guardar los cambios
+                var idLogin = nuevaCredencial.IdLogin;
+
+                nuevaFundacion.FkLogin = idLogin;
+
+                // Asignar idRol e idEstado (ajusta los valores según tu lógica)
+                nuevaFundacion.FkRol = 2; // Asigna el valor correcto según tu base de datos
+                nuevaFundacion.FkEstado = 0; // Asigna el valor correcto según tu base de datos
+
+                _dbContext.Fundacions.Add(nuevaFundacion);
+
+                await _dbContext.SaveChangesAsync();
+
+                return true; // Registro exitoso
+            }
+        }
+
 
         public async Task<bool> ExistCanino(ReqCrearCaninoDto canino)
         {
@@ -62,8 +124,9 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
                 Vacunas = caninoDto.Vacunas,
                 Disponibilidad = caninoDto.Disponibilidad,
                 FkFundacion = caninoDto.FkFundacion
-            };
-
+                
+        };
+                nuevaMascota.FkEstado = 1;
             _dbContext.Caninos.Add(nuevaMascota);
             await _dbContext.SaveChangesAsync();
 

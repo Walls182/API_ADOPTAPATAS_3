@@ -81,12 +81,12 @@ namespace API_ADOPTAPATAS_3.Services
                 if (await _UserRepository.RealizarDonacionAsync(donacionDto))
                 {
                     responseGeneric.respuesta = 1;
-                    responseGeneric.mensaje = "Creación de Donacion Exitoso";
+                   
                 }
                 else
                 {
                     responseGeneric.respuesta = 0;
-                    responseGeneric.mensaje = "Error en la creación de la donacion";
+               
                 }
             }
             catch (Exception ex)
