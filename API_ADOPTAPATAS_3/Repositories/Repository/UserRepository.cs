@@ -36,12 +36,6 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
             }
         }
 
-
-
-
-
-
-
         public async Task<bool> RegistrarUsuarioAsync(ReqRegisterDto registerDto)
         {
             Encrip _encrip = new Encrip();

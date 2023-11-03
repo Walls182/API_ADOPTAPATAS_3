@@ -30,5 +30,7 @@
 
         public string? FotoFundacion { get; set; }
 
+
+
     }
 }

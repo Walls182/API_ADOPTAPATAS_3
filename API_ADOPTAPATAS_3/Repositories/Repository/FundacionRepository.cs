@@ -11,61 +11,78 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
     public class FundacionRepository
     {
         BdadoptapatasContext _dbContext = new BdadoptapatasContext();
+        EmailManager _emailManager = new EmailManager();
+        Encrip _encrip = new Encrip();
+        GenericPass GenericPass = new GenericPass();
 
-        public async Task<bool> RegistrarFundacionAsync(ReqRegistroFundDto fundacion)
+
+
+
+        public async Task<bool> RegistrarFundacionAsync(ReqRegistroFundDto fundacionDto)
         {
-            Encrip _encrip = new Encrip();
             using (var _dbContext = new BdadoptapatasContext())
             {
-                // Verificar si el nombre de fundación ya existe como nombre de usuario
-                if (await _dbContext.Logins.AnyAsync(u => u.Usuario == fundacion.NombreFundacion))
+                // Verifica si la fundación ya está registrada
+                if (await _dbContext.Fundacions
+                    .AnyAsync(f => f.NombreFundacion == fundacionDto.NombreFundacion && f.Correo == fundacionDto.Correo))
                 {
-                    return false; // Nombre de usuario duplicado
+                    return false; // Fundación ya registrada
                 }
-                GenericPass genericPass = new GenericPass();
-                var autopass = genericPass.GenerateRandomPassword();
-                var nuevaCredencial = new Login
-                {
-                    Usuario = fundacion.NombreFundacion,
-                    Contrasena = _encrip.HashPassword(autopass) // Genera una contraseña aleatoria y la almacena con hash
-                };
 
-              
-           
+                // Genera usuario y contraseña para la fundación
+                string usuario = fundacionDto.NombreRepresentante; // Implementa tu lógica para generar usuarios únicos
+                string contrasena = GenericPass.GenerateRandomPassword(); // Implementa tu lógica para generar contraseñas aleatorias
+
+                // Crea un objeto Fundacion con los datos proporcionados
                 var nuevaFundacion = new Fundacion
                 {
-                    NombreRepresentante = fundacion.NombreRepresentante,
-                    NombreFundacion = fundacion.NombreFundacion,
-                    Direccion = fundacion.Direccion,
-                    Municipio = fundacion.Municipio,
-                    Departamento = fundacion.Departamento,
-                    Correo = fundacion.Correo,
-                    Telefono = fundacion.Telefono,
-                    Celular = fundacion.Celular,
-                    Descripcion = fundacion.Descripcion,
-                    Mision = fundacion.Mision,
-                    Vision = fundacion.Vision,
-                    ObjetivoSocial = fundacion.ObjetivoSocial,
-                    LogoFundacion = fundacion.LogoFundacion,
-                    FotoFundacion = fundacion.FotoFundacion
+                    NombreRepresentante = fundacionDto.NombreRepresentante,
+                    NombreFundacion = fundacionDto.NombreFundacion,
+                    Direccion = fundacionDto.Direccion,
+                    Municipio = fundacionDto.Municipio,
+                    Departamento = fundacionDto.Departamento,
+                    Correo = fundacionDto.Correo,
+                    Telefono = fundacionDto.Telefono,
+                    Celular = fundacionDto.Celular,
+                    Descripcion = fundacionDto.Descripcion,
+                    Mision = fundacionDto.Mision,
+                    Vision = fundacionDto.Vision,
+                    ObjetivoSocial = fundacionDto.ObjetivoSocial,
+                    LogoFundacion = fundacionDto.LogoFundacion,
+                    FotoFundacion = fundacionDto.FotoFundacion,
+                    FkRol = 2, // Rol predefinido
+                    FkEstado = 2, // Estado predefinido
                 };
 
-                // Establecer relaciones
-                _dbContext.Logins.Add(nuevaCredencial);
-                await _dbContext.SaveChangesAsync();
-
-                // Obtener el IdLogin después de guardar los cambios
-                var idLogin = nuevaCredencial.IdLogin;
-
-                nuevaFundacion.FkLogin = idLogin;
-
-                // Asignar idRol e idEstado (ajusta los valores según tu lógica)
-                nuevaFundacion.FkRol = 2; // Asigna el valor correcto según tu base de datos
-                nuevaFundacion.FkEstado = 0; // Asigna el valor correcto según tu base de datos
+                // Crea un objeto Login con el usuario y la contraseña
+                var nuevaCredencial = new Login
+                {
+                    Usuario = usuario,
+                    Contrasena = _encrip.HashPassword(contrasena)
+                };
 
                 _dbContext.Fundacions.Add(nuevaFundacion);
+                _dbContext.Logins.Add(nuevaCredencial);
 
+                // Guarda los cambios en la base de datos
                 await _dbContext.SaveChangesAsync();
+
+                // Asigna el ID de la nueva credencial a la fundación
+                nuevaFundacion.FkLogin = nuevaCredencial.IdLogin;
+
+                // Guarda los cambios nuevamente con el FkLogin actualizado
+                await _dbContext.SaveChangesAsync();
+
+                // Envía el usuario y la contraseña por correo electrónico
+                string mensajeCorreo = "<html><body>";
+                mensajeCorreo += "<h2>Datos de Inicio sesión para tu fundación</h2>";
+                mensajeCorreo += "<h2>Tu solicitud de registro en adoptapatas fue aceptada, a continuacion te enviavos las credenciales para tu inicio de sesion</h2>";
+                mensajeCorreo += "<p><strong>Usuario:</strong> " + usuario + "</p>";
+                mensajeCorreo += "<p><strong>Contraseña:</strong> " + contrasena + "</p>";
+                mensajeCorreo += "<p>¡Gracias por registrarte en nuestra plataforma!</p>";
+                mensajeCorreo += "</body></html>";
+
+                _emailManager.EnviarCorreo(fundacionDto.Correo, "Datos de Inicio sesión en adoptapatas", mensajeCorreo, true);
 
                 return true; // Registro exitoso
             }

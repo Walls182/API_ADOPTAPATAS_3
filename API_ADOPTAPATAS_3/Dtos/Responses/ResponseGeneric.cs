@@ -6,6 +6,7 @@
 
         public string mensaje { get; set; }
         public int respuesta { get; set; }
+      
 
 
     }

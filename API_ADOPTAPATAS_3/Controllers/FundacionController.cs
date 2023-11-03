@@ -20,22 +20,32 @@ namespace API_ADOPTAPATAS_3.Controllers
         [HttpPost("/registroFundacion")]
         public async Task<IActionResult> RegistroUsuario([FromBody] ReqRegistroFundDto registro)
         {
-
-
             if (!ModelState.IsValid)
             {
                 return BadRequest("Solicitud de registro no válida");
             }
 
-            var response = await _FundacionService.FundacionRegister(registro);
-
-            if (response.respuesta == 1)
+            try
             {
-                return Ok("Creación de usuario exitosa");
-            }
+                var response = await _FundacionService.FundacionRegister(registro);
 
-            return BadRequest("Error en la creación de usuario");
+                if (response.respuesta == 1)
+                {
+                    return Ok("Creación de usuario exitosa");
+                }
+                else
+                {
+                    // Captura la excepción interna si la hay y muestra el mensaje de error.
+                    return BadRequest($"Error en la creación de usuario: {response.mensaje}");
+                }
+            }
+            catch (Exception ex)
+            {
+                // Maneja la excepción y muestra el mensaje de error.
+                return BadRequest($"Error en la creación de usuario: {ex.Message}");
+            }
         }
+
 
     }
 }

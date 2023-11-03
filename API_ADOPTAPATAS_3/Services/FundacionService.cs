@@ -29,19 +29,15 @@ namespace API_ADOPTAPATAS_3.Services
             catch (Exception ex)
             {
                 // Manejar la excepción apropiadamente (por ejemplo, registrarla o propagarla)
-                Console.WriteLine("Error en CreacionUsuario: " + ex.Message);
+                Console.WriteLine("Error en CreacionUsuario: "+ ex.Message);
 
                 // Devolver una respuesta detallada sobre el error
                 return new ResponseGeneric
                 {
                     respuesta = 0,
-
+                    mensaje = ex.Message 
                 };
             }
-
-
-
-
         }
         public async Task<ResponseBuscarCaninoDto> FindCaninoAsync(ReqBuscarCaninoDto find)
         {
