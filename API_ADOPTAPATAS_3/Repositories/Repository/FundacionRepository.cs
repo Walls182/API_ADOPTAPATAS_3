@@ -12,8 +12,7 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
     {
         BdadoptapatasContext _dbContext = new BdadoptapatasContext();
         EmailManager _emailManager = new EmailManager();
-        Encrip _encrip = new Encrip();
-        GenericPass GenericPass = new GenericPass();
+   
 
 
 
@@ -22,16 +21,14 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
         {
             using (var _dbContext = new BdadoptapatasContext())
             {
-                // Verifica si la fundación ya está registrada
-                if (await _dbContext.Fundacions
-                    .AnyAsync(f => f.NombreFundacion == fundacionDto.NombreFundacion && f.Correo == fundacionDto.Correo))
+                // Verifica si la fundación ya está registrada por su nombre de fundación y correo
+                bool fundacionExistente = await _dbContext.Fundacions
+                    .AnyAsync(f => f.NombreFundacion == fundacionDto.NombreFundacion && f.Correo == fundacionDto.Correo);
+
+                if (fundacionExistente)
                 {
                     return false; // Fundación ya registrada
                 }
-
-                // Genera usuario y contraseña para la fundación
-                string usuario = fundacionDto.NombreRepresentante; // Implementa tu lógica para generar usuarios únicos
-                string contrasena = GenericPass.GenerateRandomPassword(); // Implementa tu lógica para generar contraseñas aleatorias
 
                 // Crea un objeto Fundacion con los datos proporcionados
                 var nuevaFundacion = new Fundacion
@@ -52,41 +49,27 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
                     FotoFundacion = fundacionDto.FotoFundacion,
                     FkRol = 2, // Rol predefinido
                     FkEstado = 2, // Estado predefinido
-                };
-
-                // Crea un objeto Login con el usuario y la contraseña
-                var nuevaCredencial = new Login
-                {
-                    Usuario = usuario,
-                    Contrasena = _encrip.HashPassword(contrasena)
+                    FkLogin = 1 // FkLogin predefinido
                 };
 
                 _dbContext.Fundacions.Add(nuevaFundacion);
-                _dbContext.Logins.Add(nuevaCredencial);
 
-                // Guarda los cambios en la base de datos
+                // Guarda los cambios en la base de datos para la fundación
                 await _dbContext.SaveChangesAsync();
 
-                // Asigna el ID de la nueva credencial a la fundación
-                nuevaFundacion.FkLogin = nuevaCredencial.IdLogin;
-
-                // Guarda los cambios nuevamente con el FkLogin actualizado
-                await _dbContext.SaveChangesAsync();
-
-                // Envía el usuario y la contraseña por correo electrónico
+                // Envía un mensaje de confirmación por correo
                 string mensajeCorreo = "<html><body>";
-                mensajeCorreo += "<h2>Datos de Inicio sesión para tu fundación</h2>";
-                mensajeCorreo += "<h2>Tu solicitud de registro en adoptapatas fue aceptada, a continuacion te enviavos las credenciales para tu inicio de sesion</h2>";
-                mensajeCorreo += "<p><strong>Usuario:</strong> " + usuario + "</p>";
-                mensajeCorreo += "<p><strong>Contraseña:</strong> " + contrasena + "</p>";
-                mensajeCorreo += "<p>¡Gracias por registrarte en nuestra plataforma!</p>";
+                mensajeCorreo += "<h2>Confirmación de solicitud recibida</h2>";
+                mensajeCorreo += "<p>¡Tu solicitud ha sido recibida con éxito! Pronto recibirás una respuesta con las credenciales para iniciar sesión en la plataforma.</p>";
                 mensajeCorreo += "</body></html>";
 
-                _emailManager.EnviarCorreo(fundacionDto.Correo, "Datos de Inicio sesión en adoptapatas", mensajeCorreo, true);
+                _emailManager.EnviarCorreo(fundacionDto.Correo, "Confirmación de solicitud", mensajeCorreo, true);
 
                 return true; // Registro exitoso
             }
         }
+
+
 
 
         public async Task<bool> ExistCanino(ReqCrearCaninoDto canino)

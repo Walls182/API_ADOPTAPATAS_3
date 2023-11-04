@@ -17,10 +17,12 @@ builder.Services.AddDbContext<BdadoptapatasContext>(opciones => opciones.UseSqlS
 // add services
 builder.Services.AddScoped<UserService, UserService>();
 builder.Services.AddScoped<FundacionService, FundacionService>();
+builder.Services.AddScoped<ModeradorService, ModeradorService>();
 // add repositories..
 
 builder.Services.AddScoped<UserRepository, UserRepository>();
 builder.Services.AddScoped<FundacionRepository, FundacionRepository>();
+builder.Services.AddScoped<ModeradorRepository, ModeradorRepository>();
 
 
 

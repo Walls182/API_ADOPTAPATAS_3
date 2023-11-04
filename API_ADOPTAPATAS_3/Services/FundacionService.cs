@@ -162,13 +162,36 @@ namespace API_ADOPTAPATAS_3.Services
                 };
             }
         }
-      
-       /* public async Task <List<ResponseListaCaninosDto>> ListarCaninos()
-       {
+/*
+        public async Task<List<ResponseBuscarCaninoDto>> ListarCaninos(ReqIdFunDto idFundacion)
+        {
+            try
+            {
+                // Utiliza el método para obtener la lista de caninos asociados a la fundación
+                var caninos = await (idFundacion);
 
-       }
-       */
+                // Realiza el mapeo manual de Canino a ResponseListaCaninosDto
+                var caninosDtoList = caninos.Select(c => new ResponseListaCaninosDto
+                {
+                    // Mapea los campos de Canino a ResponseListaCaninosDto
+                    IdCanino = c.IdCanino,
+                    NombreCanino = c.NombreCanino,
+                    // Otros campos...
+                }).ToList();
 
-      
+                return caninosDtoList;
+            }
+            catch (Exception ex)
+            {
+                // Manejar la excepción apropiadamente (por ejemplo, registrarla o propagarla)
+                Console.WriteLine("Error en ListarCaninos: " + ex.Message);
+                // Devolver una respuesta detallada sobre el error
+                return new List<ResponseListaCaninosDto>(); // Otra opción podría ser lanzar una excepción en lugar de retornar una lista vacía
+            }
+        }
+
+*/
+
+
     }
 }
