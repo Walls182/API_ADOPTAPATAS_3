@@ -1,5 +1,6 @@
 ﻿using API_ADOPTAPATAS_3.Dtos.RequestFundacion;
 using API_ADOPTAPATAS_3.Services;
+using API_ADOPTAPATAS_3.Utility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -12,10 +13,15 @@ namespace API_ADOPTAPATAS_3.Controllers
     public class FundacionController : ControllerBase
     {
         private readonly FundacionService _FundacionService;
+        
         public FundacionController(FundacionService fundacionService)
         { 
           _FundacionService = fundacionService;
+         
         }
+
+ 
+
 
         [HttpPost("/registroFundacion")]
         public async Task<IActionResult> RegistroUsuario([FromBody] ReqRegistroFundDto registro)

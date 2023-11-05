@@ -3,7 +3,6 @@ using API_ADOPTAPATAS_3.Dtos.RequestFundacion;
 using API_ADOPTAPATAS_3.Dtos.Responses;
 using API_ADOPTAPATAS_3.Repositories.Models;
 using API_ADOPTAPATAS_3.Utility;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API_ADOPTAPATAS_3.Repositories.Repository
@@ -11,64 +10,68 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
     public class FundacionRepository
     {
         BdadoptapatasContext _dbContext = new BdadoptapatasContext();
-        EmailManager _emailManager = new EmailManager();
-   
+       
 
 
 
 
+        
         public async Task<bool> RegistrarFundacionAsync(ReqRegistroFundDto fundacionDto)
         {
-            using (var _dbContext = new BdadoptapatasContext())
+            try
             {
-                // Verifica si la fundación ya está registrada por su nombre de fundación y correo
-                bool fundacionExistente = await _dbContext.Fundacions
-                    .AnyAsync(f => f.NombreFundacion == fundacionDto.NombreFundacion && f.Correo == fundacionDto.Correo);
-
-                if (fundacionExistente)
+                using (var _dbContext = new BdadoptapatasContext())
                 {
-                    return false; // Fundación ya registrada
+                    // Verifica si la fundación ya está registrada por su nombre de fundación y correo
+                    bool fundacionExistente = await _dbContext.Fundacions
+                        .AnyAsync(f => f.NombreFundacion == fundacionDto.NombreFundacion && f.Correo == fundacionDto.Correo);
+
+                    if (fundacionExistente)
+                    {
+                        return false; // Fundación ya registrada
+                    }
+
+                    // Crea un objeto Fundacion con los datos proporcionados
+                    var nuevaFundacion = new Fundacion
+                    {
+                        NombreRepresentante = fundacionDto.NombreRepresentante,
+                        NombreFundacion = fundacionDto.NombreFundacion,
+                        Direccion = fundacionDto.Direccion,
+                        Municipio = fundacionDto.Municipio,
+                        Departamento = fundacionDto.Departamento,
+                        Correo = fundacionDto.Correo,
+                        Telefono = fundacionDto.Telefono,
+                        Celular = fundacionDto.Celular,
+                        Descripcion = fundacionDto.Descripcion,
+                        Mision = fundacionDto.Mision,
+                        Vision = fundacionDto.Vision,
+                        ObjetivoSocial = fundacionDto.ObjetivoSocial,
+                        LogoFundacion = fundacionDto.LogoFundacion,
+                        FotoFundacion = fundacionDto.FotoFundacion,
+                        FkRol = 2, 
+                        FkEstado = 2, 
+                        FkLogin = 8 
+                    };
+
+                    _dbContext.Fundacions.Add(nuevaFundacion);
+
+                  
+                    await _dbContext.SaveChangesAsync();
+                    
+                    
+               
+                    
+                    return true; // Registro exitoso
                 }
-
-                // Crea un objeto Fundacion con los datos proporcionados
-                var nuevaFundacion = new Fundacion
-                {
-                    NombreRepresentante = fundacionDto.NombreRepresentante,
-                    NombreFundacion = fundacionDto.NombreFundacion,
-                    Direccion = fundacionDto.Direccion,
-                    Municipio = fundacionDto.Municipio,
-                    Departamento = fundacionDto.Departamento,
-                    Correo = fundacionDto.Correo,
-                    Telefono = fundacionDto.Telefono,
-                    Celular = fundacionDto.Celular,
-                    Descripcion = fundacionDto.Descripcion,
-                    Mision = fundacionDto.Mision,
-                    Vision = fundacionDto.Vision,
-                    ObjetivoSocial = fundacionDto.ObjetivoSocial,
-                    LogoFundacion = fundacionDto.LogoFundacion,
-                    FotoFundacion = fundacionDto.FotoFundacion,
-                    FkRol = 2, // Rol predefinido
-                    FkEstado = 2, // Estado predefinido
-                    FkLogin = 1 // FkLogin predefinido
-                };
-
-                _dbContext.Fundacions.Add(nuevaFundacion);
-
-                // Guarda los cambios en la base de datos para la fundación
-                await _dbContext.SaveChangesAsync();
-
-                // Envía un mensaje de confirmación por correo
-                string mensajeCorreo = "<html><body>";
-                mensajeCorreo += "<h2>Confirmación de solicitud recibida</h2>";
-                mensajeCorreo += "<p>¡Tu solicitud ha sido recibida con éxito! Pronto recibirás una respuesta con las credenciales para iniciar sesión en la plataforma.</p>";
-                mensajeCorreo += "</body></html>";
-
-                _emailManager.EnviarCorreo(fundacionDto.Correo, "Confirmación de solicitud", mensajeCorreo, true);
-
-                return true; // Registro exitoso
+            }
+            catch (Exception ex)
+            {
+                // Registra o maneja la excepción apropiadamente
+                Console.WriteLine("Error en el registro de fundación: " + ex.Message);
+                // Puedes lanzar una excepción personalizada si deseas
+                throw new Exception("Error en el registro de fundación", ex);
             }
         }
-
 
 
 
