@@ -56,11 +56,12 @@ namespace API_ADOPTAPATAS_3.UserController
 
             if (response.respuesta == 1)
             {
-                return Ok("Creación de usuario exitosa");
+                return Ok(1);
             }
 
-            return BadRequest("Error en la creación de usuario");
+            return BadRequest(0);
         }
+
 
         [HttpPost("/donaciones")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

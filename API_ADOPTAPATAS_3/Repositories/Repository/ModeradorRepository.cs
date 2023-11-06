@@ -1,4 +1,5 @@
 ﻿using API_ADOPTAPATAS_3.Dtos.RequestModerador;
+using API_ADOPTAPATAS_3.Dtos.Responses;
 using API_ADOPTAPATAS_3.Repositories.Models;
 using API_ADOPTAPATAS_3.Utility;
 
@@ -50,27 +51,24 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
             }
         }
 
-        public async Task<bool> ActivarFundacionAsync(ReqActualizarFundacionDto id)
+        public async Task<ResponseActivarFunDto> ActivarFundacionAsync(ReqActualizarFundacionDto id)
         {
             Encrip _encrip = new Encrip();
             GenericPass genericPass = new GenericPass();
-            EmailManager emailManager = new EmailManager();
+            ResponseActivarFunDto activationResult = new ResponseActivarFunDto();
+
             using (var _dbContext = new BdadoptapatasContext())
             {
-
-                // Busca la fundación por su ID
                 var fundacion = await _dbContext.Fundacions.FindAsync(id);
 
                 if (fundacion == null)
                 {
-                    return false; // Fundación no encontrada
+                    return null; // Fundación no encontrada
                 }
 
-                // Genera usuario y contraseña para la fundación
-                string usuario = fundacion.NombreRepresentante; // Implementa tu lógica para generar usuarios únicos
-                string contrasena = genericPass.GenerateRandomPassword(); // Implementa tu lógica para generar contraseñas aleatorias
+                string usuario = fundacion.NombreRepresentante;
+                string contrasena = genericPass.GenerateRandomPassword();
 
-                // Crea un objeto Login con el usuario y la contraseña
                 var nuevaCredencial = new Login
                 {
                     Usuario = usuario,
@@ -78,31 +76,21 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
                 };
 
                 _dbContext.Logins.Add(nuevaCredencial);
-
-                // Guarda los cambios en la base de datos para la credencial
                 await _dbContext.SaveChangesAsync();
 
-                // Actualiza los valores de la fundación
                 fundacion.FkLogin = nuevaCredencial.IdLogin;
-                fundacion.FkEstado = 1; // Estado activado
-
-                // Guarda los cambios en la base de datos para la fundación
+                fundacion.FkEstado = 1;
                 await _dbContext.SaveChangesAsync();
 
-                // Envía las credenciales por correo electrónico
-                string mensajeCorreo = "<html><body>";
-                mensajeCorreo += "<h2>Datos de Inicio de Sesión para tu fundación</h2>";
-                mensajeCorreo += "<h2>Tu solicitud de registro en adoptapatas ha sido aprobada. A continuación, te enviamos las credenciales para iniciar sesión en la plataforma.</h2>";
-                mensajeCorreo += "<p><strong>Usuario:</strong> " + usuario + "</p>";
-                mensajeCorreo += "<p><strong>Contraseña:</strong> " + contrasena + "</p>";
-                mensajeCorreo += "<p>¡Gracias por unirte a nuestra plataforma!</p>";
-                mensajeCorreo += "</body></html>";
+                // Configura los datos en el objeto activationResult
+                activationResult.Usuario = usuario;
+                activationResult.Contrasena = contrasena;
+                activationResult.Correo = fundacion.Correo;
 
-                emailManager.EnviarCorreo(fundacion.Correo, "Datos de Inicio de Sesión en adoptapatas", mensajeCorreo, true);
-
-                return true; // Activación exitosa
+                return activationResult; // Devuelve los datos de activación
             }
         }
+
 
     }
 }
