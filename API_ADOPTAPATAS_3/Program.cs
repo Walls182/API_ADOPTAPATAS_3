@@ -17,7 +17,7 @@ builder.Services.AddDbContext<BdadoptapatasContext>(opciones => opciones.UseSqlS
 // add services
 builder.Services.AddScoped<UserService, UserService>();
 builder.Services.AddScoped<FundacionService, FundacionService>();
-builder.Services.AddScoped<ModeradorService, ModeradorService>();
+//builder.Services.AddScoped<ModeradorService, ModeradorService>();
 builder.Services.AddTransient<IMailSender, EmailSender>();
 // add repositories..
 

@@ -8,26 +8,26 @@ namespace API_ADOPTAPATAS_3.Utility
 
 
         //Version original
-        public Task SendEmailAsync(string email, string asunto, string mensaje)
-        {
-            var _email = "ADOPTAPATASCONECT@outlook.com";
-            var Pass = "ADOPTAPATASAPI3";
-            var client = new SmtpClient("smtp-mail.outlook.com", 587)
-            {
-                EnableSsl = true,
-                Credentials = new NetworkCredential(_email, Pass)
-            };
-            return client.SendMailAsync(
-                new MailMessage(from: _email, to: email, asunto, mensaje));
-        }
+     
         //Version con html
         public async Task SendEmailHtmlAsync(string email, string asunto, string mensaje)
         {
-            var _email = "ADOPTAPATASCONECT@outlook.com";
-            var Pass = "ADOPTAPATASAPI3";
-            var client = new SmtpClient("smtp-mail.outlook.com", 587)
+            /* var _email = "ADOPTAPATASCONECT@outlook.com";
+             var Pass = "ADOPTAPATASAPI3";
+             var client = new SmtpClient("", 587)
+
+             */
+            
+            string _email = "tukodatabases@gmail.com";
+            string Pass = "1003534379Ti";
+            var client = new SmtpClient("smtp.gmail.com", 587)
+          
+
+
             {
+                UseDefaultCredentials = true,
                 EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
                 Credentials = new NetworkCredential(_email, Pass)
             };
 

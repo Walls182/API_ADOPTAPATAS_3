@@ -3,6 +3,8 @@ using API_ADOPTAPATAS_3.Dtos.RequestFundacion;
 using API_ADOPTAPATAS_3.Dtos.Responses;
 using API_ADOPTAPATAS_3.Repositories.Repository;
 using API_ADOPTAPATAS_3.Utility;
+using System.Net;
+using System.Net.Mail;
 
 namespace API_ADOPTAPATAS_3.Services
 {
@@ -22,14 +24,38 @@ namespace API_ADOPTAPATAS_3.Services
             try
             {
                 var registroExitoso = await _FundacionRepository.RegistrarFundacionAsync(requestRegister);
+              
+                string email = "tukodatabases@gmail.com";
+                string password = "fulscagiehwazjnp";
+                string smtpServer = "smtp.gmail.com";
+                int smtpPort = 587;
 
-                //Envía un mensaje de confirmación por correo
-                string mensajeCorreo = "<html><body>";
-                mensajeCorreo += "<h2>Confirmación de solicitud recibida</h2>";
-                mensajeCorreo += "<p>¡Tu solicitud ha sido recibida con éxito! Pronto recibirás una respuesta con las credenciales para iniciar sesión en la plataforma.</p>";
-                mensajeCorreo += "</body></html>";
-                await _MailSender.SendEmailHtmlAsync(requestRegister.Correo, "Confirmación de registro", mensajeCorreo);
 
+                var client = new SmtpClient(smtpServer, smtpPort)
+                {
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(email, password),
+                    EnableSsl = true,
+                };
+
+                var message = new MailMessage
+                    (email,
+                    requestRegister.Correo,
+                    "RESPUESTA SOLICITUD REGISTRO",
+                    "bienvenido "+requestRegister.NombreFundacion+" " +
+                    "");
+
+                // Crea el cuerpo del mensaje en formato HTML
+                string body = @"
+                                <h1>Bienvenido a AdoptapatasConect</h1>
+                                  <p>Gracias por querer hacer parte de nuestra comunidad. Estamos emocionados de tenerte como parte de ADOPTAPATASCONNECT.</p>
+                                   <p>En las proximas semanas recibiras la confirmacion de tus datos, en caso positivo te enviaremos las credenciales de ingreso a ADOPTAPATAS CONECT </p>
+                                   <img src='https://i.pinimg.com/736x/83/c3/7c/83c37c101f433d7c2eea87a18e3f45b5.jpg' alt='Imagen de bienvenida'>
+                                " + "<h2>TE DAMOS LAS GRACIAS EN NUESTRO EQUIPO DE TRABAJO</h1>   ";
+                message.IsBodyHtml = true;
+                message.Body = body;
+
+                client.Send(message);
                 return new ResponseGeneric
                 {
                     respuesta = registroExitoso ? 1 : 0,
@@ -61,7 +87,6 @@ namespace API_ADOPTAPATAS_3.Services
                     return new ResponseBuscarCaninoDto
                     {
                         respuesta = 1,
-                        mensaje = "Búsqueda exitosa",
                         IdCanino = Canino.IdCanino,
                         Nombre = Canino.Nombre,
                         Raza = Canino.Raza,
@@ -78,8 +103,7 @@ namespace API_ADOPTAPATAS_3.Services
                 {
                     return new ResponseBuscarCaninoDto
                     {
-                        respuesta = 0,
-                        mensaje = "Canino no encontrado"
+                        respuesta = 0
                     };
                 }
             }

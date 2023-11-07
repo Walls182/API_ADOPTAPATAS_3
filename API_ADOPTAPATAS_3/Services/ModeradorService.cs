@@ -4,6 +4,9 @@ using API_ADOPTAPATAS_3.Dtos.Responses;
 using API_ADOPTAPATAS_3.Repositories.Models;
 using API_ADOPTAPATAS_3.Repositories.Repository;
 using API_ADOPTAPATAS_3.Utility;
+using System.Net.Mail;
+using System.Net;
+using System.Web.Http;
 
 namespace API_ADOPTAPATAS_3.Services
 {
@@ -73,19 +76,42 @@ namespace API_ADOPTAPATAS_3.Services
             try
             {
                 var activationResult = await _repository.ActivarFundacionAsync(idfundacion);
+                string email = "tukodatabases@gmail.com";
+                string password = "fulscagiehwazjnp";
+                string smtpServer = "smtp.gmail.com";
+                int smtpPort = 587;
 
                 if (activationResult != null)
                 {
-                    // Envía las credenciales por correo electrónico
-                    string mensajeCorreo = "<html><body>";
-                    mensajeCorreo += "<h2>Datos de Inicio de Sesión para tu fundación</h2>";
-                    mensajeCorreo += "<h2>Tu solicitud de registro en adoptapatas ha sido aprobada. A continuación, te enviamos las credenciales para iniciar sesión en la plataforma.</h2>";
-                    mensajeCorreo += "<p><strong>Usuario:</strong> " + activationResult.Usuario + "</p>";
-                    mensajeCorreo += "<p><strong>Contraseña:</strong> " + activationResult.Contrasena + "</p>";
-                    mensajeCorreo += "<p>¡Gracias por unirte a nuestra plataforma!</p>";
-                    mensajeCorreo += "</body></html>";
+ 
+                    var client = new SmtpClient(smtpServer, smtpPort)
+                    {
+                        UseDefaultCredentials = false,
+                        Credentials = new NetworkCredential(email, password),
+                        EnableSsl = true,
+                    };
 
-                  await _mailSender.SendEmailHtmlAsync(activationResult.Correo, "Datos de Inicio de Sesión en adoptapatas", mensajeCorreo);
+                    var message = new MailMessage
+                        (email, activationResult.Correo,
+                        "CREDENCIALES INGRESO aDOPTAPATAS CONECT",
+                        "BIENVENIDA" + activationResult.Usuario +
+                        "Tu solicitud de registro fue aprobada ," +
+                        " disfruta tu experiencia" +
+                        "");
+
+                    // Crea el cuerpo del mensaje en formato HTML
+                    string body = @"
+                                <h1>Bienvenido a Adoptapatas Conect</h1>
+                                <p>Gracias por unirte a nuestra comunidad. Estamos emocionados de tenerte como parte de ADOPTAPATASCONNECT.</p>
+                                <h2>Tu solicitud de registro en adoptapatas ha sido aprobada. A continuación, te enviamos las credenciales para iniciar sesión en la plataforma.</h2>
+                                <img src='https://i.pinimg.com/736x/83/c3/7c/83c37c101f433d7c2eea87a18e3f45b5.jpg' alt='Imagen de bienvenida'>
+                                <p><strong>Usuario:</strong> " + activationResult.Usuario +
+                                "<p>< strong > Contraseña:</ strong > " + activationResult.Contrasena +
+                                "</p><h2>TE DAMOS LAS GRACIAS EN NUESTRO EQUIPO DE TRABAJO</h2>";
+                    message.IsBodyHtml = true;
+                    message.Body = body;
+
+                    client.Send(message);
                 }
 
                 return new ResponseGeneric
