@@ -53,7 +53,7 @@ namespace API_ADOPTAPATAS_3.Utility
             );
 
             userToken.Token = new JwtSecurityTokenHandler().WriteToken(JWToken);
-            userToken.TiempoExpiracion = expireTime;
+            //userToken.TiempoExpiracion = expireTime;
 
             return userToken;
         }

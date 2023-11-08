@@ -2,6 +2,7 @@
 {
     public class ResponseListaCaninosDto
     {
+        public int respuesta { get; set; }
         public int IdCanino { get; set; }
 
         public string? Nombre { get; set; }

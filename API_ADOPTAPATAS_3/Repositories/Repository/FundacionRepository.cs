@@ -10,12 +10,7 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
     public class FundacionRepository
     {
         BdadoptapatasContext _dbContext = new BdadoptapatasContext();
-       
 
-
-
-
-        
         public async Task<bool> RegistrarFundacionAsync(ReqRegistroFundDto fundacionDto)
         {
             try
@@ -72,24 +67,7 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
                 throw new Exception("Error en el registro de fundación", ex);
             }
         }
-
-
-
-        public async Task<bool> ExistCanino(ReqCrearCaninoDto canino)
-        {
-            if (await _dbContext.Caninos.AnyAsync
-                (
-                u => u.Nombre == canino.Nombre &&
-                u.Raza == canino.Raza &&
-                u.Edad == canino.Edad
-            ))
-            {
-                return true; // canino existe
-            }
-
-            return false;
-
-        }
+      
         public async Task<Canino> BuscarCanino(ReqBuscarCaninoDto find)
         {
             // Realiza la búsqueda en la base de datos
@@ -107,34 +85,79 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
             // Devuelve el canino encontrado
             return canino;
         }
-        public async Task<bool> CrearCaninoAsync(ReqCrearCaninoDto caninoDto)
+        public async Task<List<Canino>> ObtenerCaninosDisponiblesAsync()
         {
-            // Verificar si el canino ya existe
-            if (await ExistCanino(caninoDto))
-            {
-                return false; // Canino existe
-            }
+            // Realiza una consulta para obtener todos los caninos con disponibilidad en true
+            var caninosDisponibles = await _dbContext.Caninos
+                .Where(c => c.Disponibilidad == true)
+                .ToListAsync();
 
-            var nuevaMascota = new Canino
-            {
-                Nombre = caninoDto.Nombre,
-                Edad = caninoDto.Edad,
-                Raza = caninoDto.Raza,
-                Descripcion = caninoDto.Descripcion,
-                Imagen = caninoDto.Imagen,
-                EstadoSalud = caninoDto.EstadoSalud,
-                Temperamento = caninoDto.Temperamento,
-                Vacunas = caninoDto.Vacunas,
-                Disponibilidad = caninoDto.Disponibilidad,
-                FkFundacion = caninoDto.FkFundacion
-                
-        };
-                nuevaMascota.FkEstado = 1;
-            _dbContext.Caninos.Add(nuevaMascota);
-            await _dbContext.SaveChangesAsync();
-
-            return true; // Creación exitosa de la mascota
+            return caninosDisponibles;
         }
+        public async Task<bool> CrearCaninoAsync(ReqCrearCaninoDto canino)
+        {
+            try
+            {
+                using (var _dbContext = new BdadoptapatasContext())
+                {
+                    // Verifica si el canino ya esta registrado
+                    bool fundacionExistente = await _dbContext.Caninos
+                        .AnyAsync(f => f.Nombre == canino.Nombre && f.Raza == canino.Raza);
+
+                    if (fundacionExistente)
+                    {
+                        return false; 
+                    }
+
+                    // Crea un objeto Fundacion con los datos proporcionados
+                    var nuevoCanino = new Canino
+                    {
+                            Nombre = canino.Nombre,
+                            Raza  = canino.Raza,
+                            Edad = canino.Edad,
+                            Descripcion = canino.Descripcion,
+                            Imagen = canino.Imagen,
+                            EstadoSalud = canino.EstadoSalud,
+                            Temperamento = canino.Temperamento,
+                            Vacunas = canino.Vacunas,
+                            Disponibilidad = canino.Disponibilidad,
+                            FkFundacion = canino.FkFundacion,
+                            FkEstado = 1
+                      
+                    };
+
+                    _dbContext.Caninos.Add(nuevoCanino);
+
+
+                    await _dbContext.SaveChangesAsync();
+
+
+
+
+                    return true; // Registro exitoso
+                }
+            }
+            catch (Exception ex)
+            {
+                // Registra o maneja la excepción apropiadamente
+                Console.WriteLine("Error en el registro : " + ex.Message);
+                // Puedes lanzar una excepción personalizada si deseas
+                throw new Exception("Error en el registro", ex);
+            }
+        }
+      
+
+        //----------------------------------------------no------------------------
+
+        public async Task<Fundacion> ObtenerFundacionAsync(ReqIdFunDto idFundacion)
+        {
+            // Realiza una consulta para obtener una fundación específica por su ID
+            var fundacion = await _dbContext.Fundacions
+                .FirstOrDefaultAsync(f => f.IdFundacion == idFundacion.IdFundacion);
+
+            return fundacion;
+        }
+
 
         public async Task<bool> ActualizarCaninoAsync(ReqActualizarCaninoDto mascotaDto)
         {
@@ -154,16 +177,7 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
 
             return true; // Actualización exitosa del canino
         }
-
-        public async Task<List<Canino>> ObtenerCaninosDisponiblesAsync()
-        {
-            // Realiza una consulta para obtener todos los caninos con disponibilidad en true
-            var caninosDisponibles = await _dbContext.Caninos
-                .Where(c => c.Disponibilidad == true)
-                .ToListAsync();
-
-            return caninosDisponibles;
-        }
+       
         public async Task<List<Canino>> ObtenerCaninosPorFundacionAsync(ReqIdFunDto idFundacion)
         {
             // Realiza una consulta para obtener todos los caninos asociados a una fundación específica
@@ -173,6 +187,7 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
 
             return caninosPorFundacion;
         }
+      
         public async Task<bool> ActualizarDisponibilidad(ReqDisponibilidadDto reqDisponibilidadDto)
         {
             // Realiza una consulta para seleccionar los caninos de la fundación específica
@@ -189,9 +204,6 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
 
             return true; // Actualización exitosa de la disponibilidad
         }
-
-
-
 
     }
 }

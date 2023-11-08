@@ -4,6 +4,7 @@ using API_ADOPTAPATAS_3.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Xml.Linq;
 
 namespace API_ADOPTAPATAS_3.UserController
 {
@@ -11,98 +12,86 @@ namespace API_ADOPTAPATAS_3.UserController
     [ApiController]
     public class UserController : ControllerBase
     {
-
         private readonly UserService _userService;
 
         public UserController(UserService userService)
         {
             _userService = userService;
-
-
         }
 
-        [HttpPost("/login")]
-      
+        [HttpPost("login")]
         public async Task<IActionResult> InicioSesion([FromBody] ReqLoginDto request)
         {
-           
-
             if (!ModelState.IsValid)
             {
-                return BadRequest("Respuesta invalida - Invalid request");
+                return BadRequest("Solicitud no válida");
             }
 
             var response = await _userService.InicioSesionAsync(request);
 
-            if (response != null)
+            if (response.Respuesta == 1)
             {
                 return Ok(response);
             }
 
-            return BadRequest("Inicio de sesión incorrecto");
+            return BadRequest(response);
         }
 
-        [HttpPost("/registro")]
+        [HttpPost("registro")]
         public async Task<IActionResult> RegistroUsuario([FromBody] ReqRegisterDto registroDto)
         {
-            
-
             if (!ModelState.IsValid)
             {
-                return BadRequest("Solicitud de registro no válida");
+                return BadRequest("Solicitud no válida");
             }
 
             var response = await _userService.CreacionUsuarioAsync(registroDto);
 
             if (response.respuesta == 1)
             {
-                return Ok(1);
+                return Ok(response);
             }
 
-            return BadRequest(0);
+            return BadRequest(response);
         }
 
-
-        [HttpPost("/donaciones")]
+        [HttpPost("donaciones")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> RealizarDonacion([FromBody] ReqDonacionDto donacionDto)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest("Solicitud de registro no válida");
+                return BadRequest("Solicitud no válida");
             }
 
             var response = await _userService.CreacionDonacionAsync(donacionDto);
 
             if (response.respuesta == 1)
             {
-                return Ok("Creación de usuario exitosa");
+                return Ok(response);
             }
 
-            return BadRequest("Error en la creación de usuario");
+            return BadRequest(response);
         }
 
-        [HttpPost("/adopciones")]
+        [HttpPost("adopciones")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> RealizarAdopcion([FromBody] ReqAdopcionDto adopcionDto)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest("Solicitud de registro no válida");
+                return BadRequest("Solicitud no válida");
             }
 
             var response = await _userService.CreacionAdopcionAsync(adopcionDto);
 
             if (response.respuesta == 1)
             {
-                return Ok("Creación de usuario exitosa");
+                return Ok(response);
             }
 
-            return BadRequest("Error en la creación de usuario");
+            return BadRequest(response);
         }
-
-
-
-
     }
 }
+

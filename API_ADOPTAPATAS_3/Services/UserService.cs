@@ -11,49 +11,43 @@ namespace API_ADOPTAPATAS_3.Services
     public class UserService
     {
         private readonly JwtSettingsDto _jwtSettings;
-        private readonly UserRepository _UserRepository;
-        
-    
-        
+        private readonly UserRepository _userRepository;
 
         public UserService(JwtSettingsDto jwtSettingsDto, UserRepository userRepository)
         {
             _jwtSettings = jwtSettingsDto;
-            _UserRepository = userRepository;
+            _userRepository = userRepository;
         }
 
         public async Task<ResponseLoginDto> InicioSesionAsync(ReqLoginDto requestLoginDto)
         {
-            ResponseLoginDto responseLoginDto = new ResponseLoginDto();
+            var responseLoginDto = new ResponseLoginDto();
 
-            var idRol = await _UserRepository.ObtenerIdRolUsuarioAsync(requestLoginDto);
+            var idRol = await _userRepository.ObtenerIdRolUsuarioAsync(requestLoginDto);
 
-            if (idRol.HasValue) 
+            if (idRol.HasValue)
             {
                 responseLoginDto = JwtUtility.GenToken(responseLoginDto, _jwtSettings);
                 responseLoginDto.Respuesta = 1;
-                responseLoginDto.IdRol = idRol.Value; // Asignamos el IdRol
+                responseLoginDto.IdRol = idRol.Value;
             }
             else
             {
                 responseLoginDto.Respuesta = 0;
-         
             }
 
             return responseLoginDto;
         }
 
-
         public async Task<ResponseGeneric> CreacionUsuarioAsync(ReqRegisterDto requestRegister)
         {
             try
             {
-                var registroExitoso = await _UserRepository.RegistrarUsuarioAsync(requestRegister);
+                var registroExitoso = await _userRepository.RegistrarUsuarioAsync(requestRegister);
 
                 return new ResponseGeneric
                 {
-                    respuesta = registroExitoso ? 1 : 0,
-  
+                    respuesta = registroExitoso ? 1 : 0
                 };
             }
             catch (Exception ex)
@@ -61,55 +55,48 @@ namespace API_ADOPTAPATAS_3.Services
                 // Manejar la excepción apropiadamente (por ejemplo, registrarla o propagarla)
                 Console.WriteLine("Error en CreacionUsuario: " + ex.Message);
 
-                // Devolver una respuesta detallada sobre el error
                 return new ResponseGeneric
                 {
-                    respuesta = 0,
-            
+                    respuesta = 0
                 };
             }
         }
 
-        //-------------------------------Dejada por el momento en usuarios
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ResponseGeneric> CreacionDonacionAsync(ReqDonacionDto donacionDto)
         {
-            ResponseGeneric responseGeneric = new ResponseGeneric();
+            var responseGeneric = new ResponseGeneric();
 
             try
             {
-                if (await _UserRepository.RealizarDonacionAsync(donacionDto))
+                if (await _userRepository.RealizarDonacionAsync(donacionDto))
                 {
                     responseGeneric.respuesta = 1;
-                   
                 }
                 else
                 {
                     responseGeneric.respuesta = 0;
-               
                 }
             }
             catch (Exception ex)
             {
                 // Manejar la excepción apropiadamente (por ejemplo, registrarla o propagarla)
-                Console.WriteLine("Error: " + ex.Message);
+                Console.WriteLine("Error en CreacionDonacionAsync: " + ex.Message);
 
-                // Devolver una respuesta detallada sobre el error
                 responseGeneric.respuesta = 0;
                 responseGeneric.mensaje = "Error en la: " + ex.Message;
             }
 
             return responseGeneric;
         }
-        //-------------------------------Dejada por el momento en usuarios
-      
+
         public async Task<ResponseGeneric> CreacionAdopcionAsync(ReqAdopcionDto adopcionDto)
         {
-            ResponseGeneric responseGeneric = new ResponseGeneric();
+            var responseGeneric = new ResponseGeneric();
 
             try
             {
-                if (await _UserRepository.RealizarAdopcionAsync(adopcionDto))
+                if (await _userRepository.RealizarAdopcionAsync(adopcionDto))
                 {
                     responseGeneric.respuesta = 1;
                     responseGeneric.mensaje = "Creación de Adopcion exitoso";
@@ -123,17 +110,15 @@ namespace API_ADOPTAPATAS_3.Services
             catch (Exception ex)
             {
                 // Manejar la excepción apropiadamente (por ejemplo, registrarla o propagarla)
-                Console.WriteLine("Error en: " + ex.Message);
+                Console.WriteLine("Error en CreacionAdopcionAsync: " + ex.Message);
 
-                // Devolver una respuesta detallada sobre el error
                 responseGeneric.respuesta = 0;
                 responseGeneric.mensaje = "Error en: " + ex.Message;
             }
 
             return responseGeneric;
         }
-
-
     }
+
 
 }

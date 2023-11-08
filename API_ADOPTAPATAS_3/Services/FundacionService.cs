@@ -11,15 +11,12 @@ namespace API_ADOPTAPATAS_3.Services
     public class FundacionService
     {
         private readonly FundacionRepository _FundacionRepository;
-        private readonly IMailSender _MailSender;
+       
         public FundacionService(FundacionRepository fundacionRepository, IMailSender mailSender)
         {
             _FundacionRepository = fundacionRepository;
-            _MailSender = mailSender;
         }
-
-
-        public async Task<ResponseGeneric> FundacionRegister(ReqRegistroFundDto requestRegister)
+        public async Task<ResponseGeneric> FundacionRegisterService(ReqRegistroFundDto requestRegister)
         {
             try
             {
@@ -47,11 +44,11 @@ namespace API_ADOPTAPATAS_3.Services
 
                 // Crea el cuerpo del mensaje en formato HTML
                 string body = @"
-                                <h1>Bienvenido a AdoptapatasConect</h1>
-                                  <p>Gracias por querer hacer parte de nuestra comunidad. Estamos emocionados de tenerte como parte de ADOPTAPATASCONNECT.</p>
-                                   <p>En las proximas semanas recibiras la confirmacion de tus datos, en caso positivo te enviaremos las credenciales de ingreso a ADOPTAPATAS CONECT </p>
+                                <h1>Bienvenido a Adoptapatas Conect</h1>
+                                <p>Gracias por querer hacer parte de nuestra comunidad. Estamos emocionados de tenerte como parte de Adoptapatas.</p>
+                                   <p>En las proximas semanas recibiras la confirmacion de tu registro,nuestros asesores validaran los datos. En caso positivo te enviaremos las credenciales de ingreso a ADOPTAPATAS CONECT </p>
                                    <img src='https://i.pinimg.com/736x/83/c3/7c/83c37c101f433d7c2eea87a18e3f45b5.jpg' alt='Imagen de bienvenida'>
-                                " + "<h2>TE DAMOS LAS GRACIAS EN NUESTRO EQUIPO DE TRABAJO</h1>   ";
+                                " + "<h2>TE DAMOS LAS GRACIAS DE PARTE DE NUESTRO EQUIPO DE TRABAJO</h1>   ";
                 message.IsBodyHtml = true;
                 message.Body = body;
 
@@ -75,7 +72,6 @@ namespace API_ADOPTAPATAS_3.Services
                 };
             }
         }
-
         public async Task<ResponseBuscarCaninoDto> FindCaninoAsync(ReqBuscarCaninoDto find)
         {
             try
@@ -115,7 +111,44 @@ namespace API_ADOPTAPATAS_3.Services
                 throw;
             }
         }
-        public async Task<ResponseGeneric> CreateCaninoAsync(ReqCrearCaninoDto reqCrearCaninoDto)
+        public async Task<List<ResponseListaCaninosDto>> ObtenerCaninosDisponibles()
+        {
+            // Utiliza el método del repositorio para obtener la lista de caninos disponibles
+            var caninos = await _FundacionRepository.ObtenerCaninosDisponiblesAsync();
+
+            if (caninos != null && caninos.Any())
+            {
+                var caninosDtoList = new List<ResponseListaCaninosDto>();
+
+                foreach (var canino in caninos)
+                {
+                    var caninoDto = new ResponseListaCaninosDto
+                    {
+                        IdCanino = canino.IdCanino,
+                        respuesta = 1,
+                        Nombre = canino.Nombre,
+                        Raza = canino.Raza,
+                        Edad = canino.Edad,
+                        Descripcion = canino.Descripcion,
+                        Imagen = canino.Imagen,
+                        EstadoSalud = canino.EstadoSalud,
+                        Temperamento = canino.Temperamento,
+                        Vacunas = canino.Vacunas,
+                        Disponibilidad = canino.Disponibilidad
+                    };
+
+                    caninosDtoList.Add(caninoDto);
+                }
+
+                return caninosDtoList;
+            }
+            else
+            {
+                // Si la lista está vacía o es null, puedes devolver una lista vacía o un mensaje apropiado
+                return new List<ResponseListaCaninosDto>();
+            }
+        }
+        public async Task<ResponseGeneric> CreateCaninoService(ReqCrearCaninoDto reqCrearCaninoDto)
         {
             try
             {
@@ -140,6 +173,20 @@ namespace API_ADOPTAPATAS_3.Services
                 };
             }
         }
+
+       
+
+
+
+
+
+        //-------------------------A estos no los llama el front :( pero estan hechos-------------------
+
+
+
+
+
+
         public async Task<ResponseGeneric> UpdateCaninoAsync(ReqActualizarCaninoDto respActualizarCaninoDto)
         {
             try
@@ -171,7 +218,6 @@ namespace API_ADOPTAPATAS_3.Services
 
 
         }
-
         public async Task<ResponseGeneric> UpdateDispoAsync (ReqDisponibilidadDto reqDisponibilidadDto)
         {
             try
@@ -195,43 +241,6 @@ namespace API_ADOPTAPATAS_3.Services
                     respuesta = 0,
                     mensaje = "Error en la actualizacion de usuario: " + ex.Message
                 };
-            }
-        }
-
-        public async Task<List<ResponseListaCaninosDto>> ObtenerCaninosDisponibles()
-        {
-            // Utiliza el método del repositorio para obtener la lista de caninos disponibles
-            var caninos = await _FundacionRepository.ObtenerCaninosDisponiblesAsync();
-
-            if (caninos != null && caninos.Any())
-            {
-                var caninosDtoList = new List<ResponseListaCaninosDto>();
-
-                foreach (var canino in caninos)
-                {
-                    var caninoDto = new ResponseListaCaninosDto
-                    {
-                        IdCanino = canino.IdCanino,
-                        Nombre = canino.Nombre,
-                        Raza = canino.Raza,
-                        Edad = canino.Edad,
-                        Descripcion = canino.Descripcion,
-                        Imagen = canino.Imagen,
-                        EstadoSalud = canino.EstadoSalud,
-                        Temperamento = canino.Temperamento,
-                        Vacunas = canino.Vacunas,
-                        Disponibilidad = canino.Disponibilidad
-                    };
-
-                    caninosDtoList.Add(caninoDto);
-                }
-
-                return caninosDtoList;
-            }
-            else
-            {
-                // Si la lista está vacía o es null, puedes devolver una lista vacía o un mensaje apropiado
-                return new List<ResponseListaCaninosDto>();
             }
         }
 

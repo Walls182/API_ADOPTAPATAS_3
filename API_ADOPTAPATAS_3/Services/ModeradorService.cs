@@ -13,15 +13,15 @@ namespace API_ADOPTAPATAS_3.Services
     public class ModeradorService
     {
       private readonly ModeradorRepository _repository;
-        private readonly IMailSender _mailSender;
+       
 
-        public ModeradorService(ModeradorRepository repository, IMailSender mailSender) 
+        public ModeradorService(ModeradorRepository repository) 
         {
         _repository = repository;
-            _mailSender = mailSender;
+            
 
         }
-        public async Task<ResponseGeneric> CambioRol(ReqCambioRolDto cambio)
+        public async Task<ResponseGeneric> CambioRolService(ReqCambioRolDto cambio)
         {
             try
             {
@@ -46,11 +46,11 @@ namespace API_ADOPTAPATAS_3.Services
             }
         }
 
-        public async Task<ResponseGeneric> CambioEstado(ReqCambioRolDto cambio)
+        public async Task<ResponseGeneric> CambioEstadoService(ReqCambioEstadoDto cambio)
         {
             try
             {
-                var registroExitoso = await _repository.CambiarRolUsuarioAsync(cambio);
+                var registroExitoso = await _repository.CambiarEstadoUsuarioAsync(cambio);
 
                 return new ResponseGeneric
                 {
@@ -128,6 +128,49 @@ namespace API_ADOPTAPATAS_3.Services
                 {
                     respuesta = 0,
                 };
+            }
+        }
+        public async Task<List<ResponseListaFundacionesDto>> ObtenerFundaciones()
+        {
+            // Utiliza el método del repositorio para obtener la lista de fundaciones
+            var fundaciones = await _repository.ObtenerFundaciones();
+
+            if (fundaciones != null && fundaciones.Any())
+            {
+                var fundacionesDtoList = new List<ResponseListaFundacionesDto>();
+
+                foreach (var fundacion in fundaciones)
+                {
+                    var fundacionDto = new ResponseListaFundacionesDto
+                    {
+                        IdFundacion = fundacion.IdFundacion,
+                        respuesta = 1,
+                        NombreFundacion = fundacion.NombreFundacion,
+                        NombreRepresentante = fundacion.NombreRepresentante,
+                        Direccion = fundacion.Direccion,
+                        Municipio = fundacion.Municipio,
+                        Departamento = fundacion.Departamento,
+                        Correo = fundacion.Correo,
+                        Telefono = fundacion.Telefono,
+                        Celular = fundacion.Celular,
+                        Descripcion = fundacion.Descripcion,
+                        Mision = fundacion.Mision,
+                        Vision = fundacion.Vision,
+                        ObjetivoSocial = fundacion.ObjetivoSocial,
+                        LogoFundacion = fundacion.LogoFundacion,
+                        FotoFundacion = fundacion.FotoFundacion
+
+                    };
+
+                    fundacionesDtoList.Add(fundacionDto);
+                }
+
+                return fundacionesDtoList;
+            }
+            else
+            {
+                // Si la lista está vacía o es null, puedes devolver una lista vacía o un mensaje apropiado
+                return new List<ResponseListaFundacionesDto>();
             }
         }
 

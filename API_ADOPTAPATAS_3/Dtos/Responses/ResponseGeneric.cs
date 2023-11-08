@@ -4,7 +4,7 @@
     {
         public ResponseGeneric() { }
 
-        public string mensaje { get; set; }
+        public string mensaje { get; set; } 
         public int respuesta { get; set; }
       
 

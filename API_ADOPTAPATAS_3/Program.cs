@@ -16,18 +16,16 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<BdadoptapatasContext>(opciones => opciones.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 // add services
 builder.Services.AddScoped<UserService, UserService>();
-builder.Services.AddScoped<FundacionService, FundacionService>();
-//builder.Services.AddScoped<ModeradorService, ModeradorService>();
-builder.Services.AddTransient<IMailSender, EmailSender>();
-// add repositories..
 
+builder.Services.AddScoped<FundacionService, FundacionService>();
+builder.Services.AddScoped<ModeradorService, ModeradorService>();
+builder.Services.AddScoped<Encrip, Encrip>();
+builder.Services.AddTransient<IMailSender, EmailSender>();
+
+// add repositories..
 builder.Services.AddScoped<UserRepository, UserRepository>();
 builder.Services.AddScoped<FundacionRepository, FundacionRepository>();
 builder.Services.AddScoped<ModeradorRepository, ModeradorRepository>();
-
-
-
-
 
 // Add Automapper settings
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
@@ -101,6 +99,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 
 app.Run();

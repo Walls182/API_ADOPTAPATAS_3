@@ -7,13 +7,16 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Win32;
 
 namespace API_ADOPTAPATAS_3.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class FundacionController : ControllerBase
-    {
+    { 
+       
+
         private readonly FundacionService _FundacionService;
         
         public FundacionController(FundacionService fundacionService)
@@ -21,12 +24,8 @@ namespace API_ADOPTAPATAS_3.Controllers
           _FundacionService = fundacionService;
          
         }
-
- 
-
-
         [HttpPost("/registroFundacion")]
-        public async Task<IActionResult> RegistroUsuario([FromBody] ReqRegistroFundDto registro)
+        public async Task<ActionResult<ResponseGeneric>> RegistroFundacion([FromBody] ReqRegistroFundDto registro)
         {
             if (!ModelState.IsValid)
             {
@@ -35,7 +34,7 @@ namespace API_ADOPTAPATAS_3.Controllers
 
             try
             {
-                var response = await _FundacionService.FundacionRegister(registro);
+                var response = await _FundacionService.FundacionRegisterService(registro);
 
                 if (response.respuesta == 1)
                 {
@@ -53,9 +52,9 @@ namespace API_ADOPTAPATAS_3.Controllers
                 return BadRequest($"Error en la creación de usuario: {ex.Message}");
             }
         }
-        [HttpPost("/buscar")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ActionResult<ResponseBuscarCaninoDto>> BuscarCaninoAsync(ReqBuscarCaninoDto find)
+        [HttpPost("/buscar")]
+        public async Task<ActionResult<ResponseBuscarCaninoDto>> BuscarCanino(ReqBuscarCaninoDto find)
         {
             try
             {
@@ -78,71 +77,60 @@ namespace API_ADOPTAPATAS_3.Controllers
             }
         }
         [HttpPost("/disponibles")]
-        public async Task<ActionResult<List<ResponseListaCaninosDto>>> ObtenerCaninosDisponiblesAsync()
+        public async Task<ActionResult<List<ResponseListaCaninosDto>>> ObtenerCaninosDisponibles()
         {
             try
             {
-                var caninos = await _FundacionService.ObtenerCaninosDisponibles();
+                var caninosResponse = await _FundacionService.ObtenerCaninosDisponibles();
 
-                if (caninos != null && caninos.Any())
+                if (caninosResponse.Count > 0)
                 {
-                    // Mapea los objetos Canino a objetos ResponseListaCaninosDto
-                    var caninosDtoList = caninos.Select(canino => new ResponseListaCaninosDto
-                    {
-                        IdCanino = canino.IdCanino,
-                        Nombre = canino.Nombre,
-                        Raza = canino.Raza,
-                        Edad = canino.Edad,
-                        Descripcion = canino.Descripcion,
-                        Imagen = canino.Imagen,
-                        EstadoSalud = canino.EstadoSalud,
-                        Temperamento = canino.Temperamento,
-                        Vacunas = canino.Vacunas,
-                        Disponibilidad = canino.Disponibilidad
-                    }).ToList();
-
-                    return Ok(caninosDtoList); // Retorna 200 OK con la lista de caninos disponibles
+                    return Ok(caninosResponse); // Retorna 200 OK con la lista de caninos disponibles
                 }
                 else
                 {
-                    return NotFound(); // Retorna 404 Not Found si la lista está vacía o es null
+                    return NotFound("No se encontraron caninos disponibles"); // Retorna 404 Not Found si no se encontraron caninos disponibles
                 }
             }
             catch (Exception ex)
             {
                 // Manejar la excepción apropiadamente
-                Console.WriteLine("Error al obtener la lista de caninos disponibles: " + ex.Message);
-                return StatusCode(500, "Error al obtener la lista de caninos disponibles"); // Retorna 500 Internal Server Error en caso de excepción
+                Console.WriteLine("Error en la obtención de caninos disponibles: " + ex.Message);
+                return StatusCode(500, "Error en la obtención de caninos disponibles"); // Retorna 500 Internal Server Error en caso de excepción
             }
         }
-        [HttpPost("/crear")]
-        public async Task<ActionResult<ResponseGeneric>> CreateCaninoAsync([FromBody] ReqCrearCaninoDto reqCrearCaninoDto)
+            [HttpPost("/crear")]
+        public async Task<ActionResult<ResponseGeneric>> CreateCanino([FromBody] ReqCrearCaninoDto reqCrearCaninoDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Solicitud de registro no válida");
+            }
+
             try
             {
-                var registroExitoso = await _FundacionService.CreateCaninoAsync(reqCrearCaninoDto);
+                var response = await _FundacionService.CreateCaninoService(reqCrearCaninoDto);
 
-                if (registroExitoso != null)
+                if (response.respuesta == 1)
                 {
-                    return Ok(registroExitoso.respuesta);
+                    return Ok(response);
                 }
                 else
                 {
-                    return BadRequest(registroExitoso.respuesta);
+                    // Captura la excepción interna si la hay y muestra el mensaje de error.
+                    return BadRequest($"Error en la creación de usuario: {response.mensaje}");
                 }
             }
             catch (Exception ex)
             {
-                // Manejar la excepción apropiadamente
-                Console.WriteLine("Error en la creación de canino: " + ex.Message);
-                return StatusCode(500, new ResponseGeneric
-                {
-                    respuesta = 0,
-                    mensaje = "Error en la creación de canino: " + ex.Message
-                });
+                // Maneja la excepción y muestra el mensaje de error.
+                return BadRequest($"Error en la creación de usuario: {ex.Message}");
             }
         }
+
+      
+        
     }
 
-}
+}//
 
