@@ -7,6 +7,7 @@ using API_ADOPTAPATAS_3.Utility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,32 +83,47 @@ builder.Services.AddCors(options =>
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(o =>
+builder.Services.AddSwaggerGen(options =>
 {
-    o.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
         Name = "Authorization",
         Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
         Scheme = "Bearer",
+        BearerFormat = "JWT",
         In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "Description",
+        Description = "Enter Bearer [Space] and then your valid token in the text",
     });
-    o.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement{
+    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement {
+    {
+        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
         {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme{
-        Reference = new Microsoft.OpenApi.Models.OpenApiReference{
-            Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-            Id = "Bearer"
+            Reference = new Microsoft.OpenApi.Models.OpenApiReference
+            {
+                Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                Id = "Bearer"
+            }
+        },
+        new string[] {}
         }
-    },
-    new string[] { }
-
-
-    }
     });
-    
-}
-);
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "API_ADOPTAPATAS_3:" + builder.Configuration.GetValue<string>("AplicationInsights:Envieroment"),
+        Description = "Adoptapatas_Api con autenticacion y tokenizado, por capa de servicio y se conecta a front",
+        Contact = new OpenApiContact
+        {
+            Name = "Adoptapatas",
+            Email = "wasc0144@gmail.com"
+        },
+        License = new OpenApiLicense
+        {
+            Name = "UDEC",
+            Url = new Uri("https://www.ucundinamarca.edu.co/")
+        }
+    });
+});
 
 
 var app = builder.Build();
@@ -115,11 +131,11 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    
 }
 app.UseCors("AllowAnyOrigin");   // dejarlo en "AllowAnyOrigin" si se configura en cualquier origen
-
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
