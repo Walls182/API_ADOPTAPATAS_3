@@ -19,7 +19,7 @@ namespace API_ADOPTAPATAS_3.UserController
             _userService = userService;
         }
 
-        [HttpPost("login")]
+        [HttpPost("/inicioSesion")]
         public async Task<IActionResult> InicioSesion([FromBody] ReqLoginDto request)
         {
             if (!ModelState.IsValid)
@@ -37,7 +37,7 @@ namespace API_ADOPTAPATAS_3.UserController
             return BadRequest(response);
         }
 
-        [HttpPost("registro")]
+        [HttpPost("/registroUsuario")]
         public async Task<IActionResult> RegistroUsuario([FromBody] ReqRegisterDto registroDto)
         {
             if (!ModelState.IsValid)
@@ -55,7 +55,7 @@ namespace API_ADOPTAPATAS_3.UserController
             return BadRequest(response);
         }
 
-        [HttpPost("donaciones")]
+        [HttpPost("/donaciones")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> RealizarDonacion([FromBody] ReqDonacionDto donacionDto)
         {
@@ -74,7 +74,7 @@ namespace API_ADOPTAPATAS_3.UserController
             return BadRequest(response);
         }
 
-        [HttpPost("adopciones")]
+        [HttpPost("/adopciones")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> RealizarAdopcion([FromBody] ReqAdopcionDto adopcionDto)
         {

@@ -20,7 +20,7 @@ builder.Services.AddScoped<UserService, UserService>();
 builder.Services.AddScoped<FundacionService, FundacionService>();
 builder.Services.AddScoped<ModeradorService, ModeradorService>();
 builder.Services.AddScoped<Encrip, Encrip>();
-builder.Services.AddTransient<IMailSender, EmailSender>();
+builder.Services.AddScoped<GenericPass, GenericPass>();
 
 // add repositories..
 builder.Services.AddScoped<UserRepository, UserRepository>();
@@ -31,7 +31,7 @@ builder.Services.AddScoped<ModeradorRepository, ModeradorRepository>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 // Ad jwt settings
 var bindjwt = new JwtSettingsDto();
-builder.Configuration.Bind("Jwt", bindjwt);
+builder.Configuration.Bind("JwtKeys",bindjwt);    
 builder.Services.AddSingleton(bindjwt);
 builder.Services.AddAuthentication(option =>
 {
@@ -45,12 +45,12 @@ builder.Services.AddAuthentication(option =>
         options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters()
         {
-            IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(bindjwt.Key)),
             ValidateIssuerSigningKey = bindjwt.ValidKey,
+            IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(bindjwt.Key)),
+            ValidateIssuer = bindjwt.ValidateIssuer,
             ValidIssuer = bindjwt.Issuer,
-            ValidateIssuer = bindjwt.ValidIssuer,
+            ValidateAudience = bindjwt.ValidateAudience,
             ValidAudience = bindjwt.Audience,
-            ValidateAudience = bindjwt.ValidAudience,
             RequireExpirationTime = bindjwt.RequireExpirationTime,
             ValidateLifetime = bindjwt.RequireExpirationTime,
             ClockSkew = TimeSpan.Zero,
@@ -82,7 +82,33 @@ builder.Services.AddCors(options =>
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(o =>
+{
+    o.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Description",
+    });
+    o.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement{
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme{
+        Reference = new Microsoft.OpenApi.Models.OpenApiReference{
+            Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+            Id = "Bearer"
+        }
+    },
+    new string[] { }
+
+
+    }
+    });
+    
+}
+);
+
 
 var app = builder.Build();
 

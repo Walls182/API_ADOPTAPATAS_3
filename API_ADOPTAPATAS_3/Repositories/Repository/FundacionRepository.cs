@@ -9,71 +9,64 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
 {
     public class FundacionRepository
     {
-        BdadoptapatasContext _dbContext = new BdadoptapatasContext();
-
-        public async Task<bool> RegistrarFundacionAsync(ReqRegistroFundDto fundacionDto)
+        private readonly BdadoptapatasContext _dbContext;
+        public FundacionRepository(BdadoptapatasContext dbContext)
         {
-            try
-            {
-                using (var _dbContext = new BdadoptapatasContext())
-                {
-                    // Verifica si la fundación ya está registrada por su nombre de fundación y correo
-                    bool fundacionExistente = await _dbContext.Fundacions
-                        .AnyAsync(f => f.NombreFundacion == fundacionDto.NombreFundacion && f.Correo == fundacionDto.Correo);
-
-                    if (fundacionExistente)
-                    {
-                        return false; // Fundación ya registrada
-                    }
-
-                    // Crea un objeto Fundacion con los datos proporcionados
-                    var nuevaFundacion = new Fundacion
-                    {
-                        NombreRepresentante = fundacionDto.NombreRepresentante,
-                        NombreFundacion = fundacionDto.NombreFundacion,
-                        Direccion = fundacionDto.Direccion,
-                        Municipio = fundacionDto.Municipio,
-                        Departamento = fundacionDto.Departamento,
-                        Correo = fundacionDto.Correo,
-                        Telefono = fundacionDto.Telefono,
-                        Celular = fundacionDto.Celular,
-                        Descripcion = fundacionDto.Descripcion,
-                        Mision = fundacionDto.Mision,
-                        Vision = fundacionDto.Vision,
-                        ObjetivoSocial = fundacionDto.ObjetivoSocial,
-                        LogoFundacion = fundacionDto.LogoFundacion,
-                        FotoFundacion = fundacionDto.FotoFundacion,
-                        FkRol = 2, 
-                        FkEstado = 2, 
-                        FkLogin = 8 
-                    };
-
-                    _dbContext.Fundacions.Add(nuevaFundacion);
-
-                  
-                    await _dbContext.SaveChangesAsync();
-                    
-                    
-               
-                    
-                    return true; // Registro exitoso
-                }
-            }
-            catch (Exception ex)
-            {
-                // Registra o maneja la excepción apropiadamente
-                Console.WriteLine("Error en el registro de fundación: " + ex.Message);
-                // Puedes lanzar una excepción personalizada si deseas
-                throw new Exception("Error en el registro de fundación", ex);
-            }
+            _dbContext = dbContext;
         }
-      
+
+        public async Task<bool> RegistrarFundacion(ReqRegistroFundDto fundacionDto)
+        {
+
+            // Verifica si la fundación ya está registrada por su nombre de fundación y correo
+            var fundacionExistente = await _dbContext.Fundacions
+                .AnyAsync(f => f.NombreFundacion == fundacionDto.NombreFundacion && f.Correo == fundacionDto.Correo);
+
+            if (fundacionExistente)
+            {
+                return false; // Fundación ya registrada
+            }
+
+            // Crea un objeto Fundacion con los datos proporcionados
+            var nuevaFundacion = new Fundacion
+            {
+                NombreRepresentante = fundacionDto.NombreRepresentante,
+                NombreFundacion = fundacionDto.NombreFundacion,
+                Direccion = fundacionDto.Direccion,
+                Municipio = fundacionDto.Municipio,
+                Departamento = fundacionDto.Departamento,
+                Correo = fundacionDto.Correo,
+                Telefono = fundacionDto.Telefono,
+                Celular = fundacionDto.Celular,
+                Descripcion = fundacionDto.Descripcion,
+                Mision = fundacionDto.Mision,
+                Vision = fundacionDto.Vision,
+                ObjetivoSocial = fundacionDto.ObjetivoSocial,
+                LogoFundacion = fundacionDto.LogoFundacion,
+                FotoFundacion = fundacionDto.FotoFundacion,
+                FkRol = 2,
+                FkEstado = 2,
+                FkLogin = 8
+            };
+
+            _dbContext.Fundacions.Add(nuevaFundacion);
+
+
+            await _dbContext.SaveChangesAsync();
+
+
+
+
+            return true; // Registro exitoso
+
+        }
+
         public async Task<Canino> BuscarCanino(ReqBuscarCaninoDto find)
         {
             // Realiza la búsqueda en la base de datos
             var canino = await _dbContext.Caninos.FirstOrDefaultAsync(u =>
-                u.Nombre == find.Nombre &&
-                u.Raza == find.Raza &&
+                u.Nombre == find.Nombre ||
+                u.Raza == find.Raza ||
                 u.Edad == find.Edad);
 
             if (canino == null)
@@ -85,7 +78,7 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
             // Devuelve el canino encontrado
             return canino;
         }
-        public async Task<List<Canino>> ObtenerCaninosDisponiblesAsync()
+        public async Task<List<Canino>> ObtenerCaninosDisponibles()
         {
             // Realiza una consulta para obtener todos los caninos con disponibilidad en true
             var caninosDisponibles = await _dbContext.Caninos
@@ -94,57 +87,46 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
 
             return caninosDisponibles;
         }
-        public async Task<bool> CrearCaninoAsync(ReqCrearCaninoDto canino)
+        public async Task<bool> CrearCanino(ReqCrearCaninoDto canino)
         {
-            try
+
+            // Verifica si el canino ya esta registrado
+            bool fundacionExistente = await _dbContext.Caninos
+                .AnyAsync(f => f.Nombre == canino.Nombre && f.Raza == canino.Raza);
+
+            if (fundacionExistente)
             {
-                using (var _dbContext = new BdadoptapatasContext())
-                {
-                    // Verifica si el canino ya esta registrado
-                    bool fundacionExistente = await _dbContext.Caninos
-                        .AnyAsync(f => f.Nombre == canino.Nombre && f.Raza == canino.Raza);
-
-                    if (fundacionExistente)
-                    {
-                        return false; 
-                    }
-
-                    // Crea un objeto Fundacion con los datos proporcionados
-                    var nuevoCanino = new Canino
-                    {
-                            Nombre = canino.Nombre,
-                            Raza  = canino.Raza,
-                            Edad = canino.Edad,
-                            Descripcion = canino.Descripcion,
-                            Imagen = canino.Imagen,
-                            EstadoSalud = canino.EstadoSalud,
-                            Temperamento = canino.Temperamento,
-                            Vacunas = canino.Vacunas,
-                            Disponibilidad = canino.Disponibilidad,
-                            FkFundacion = canino.FkFundacion,
-                            FkEstado = 1
-                      
-                    };
-
-                    _dbContext.Caninos.Add(nuevoCanino);
-
-
-                    await _dbContext.SaveChangesAsync();
-
-
-
-
-                    return true; // Registro exitoso
-                }
+                return false;
             }
-            catch (Exception ex)
+
+            // Crea un objeto Fundacion con los datos proporcionados
+            var nuevoCanino = new Canino
             {
-                // Registra o maneja la excepción apropiadamente
-                Console.WriteLine("Error en el registro : " + ex.Message);
-                // Puedes lanzar una excepción personalizada si deseas
-                throw new Exception("Error en el registro", ex);
-            }
+                Nombre = canino.Nombre,
+                Raza = canino.Raza,
+                Edad = canino.Edad,
+                Descripcion = canino.Descripcion,
+                Imagen = canino.Imagen,
+                EstadoSalud = canino.EstadoSalud,
+                Temperamento = canino.Temperamento,
+                Vacunas = canino.Vacunas,
+                Disponibilidad = canino.Disponibilidad,
+                FkFundacion = canino.FkFundacion,
+                FkEstado = 1
+
+            };
+
+            _dbContext.Caninos.Add(nuevoCanino);
+
+
+            await _dbContext.SaveChangesAsync();
+
+
+
+
+            return true; // Registro exitoso
         }
+    
       
 
         //----------------------------------------------no------------------------

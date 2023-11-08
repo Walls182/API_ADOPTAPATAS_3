@@ -12,7 +12,7 @@ namespace API_ADOPTAPATAS_3.Services
     {
         private readonly FundacionRepository _FundacionRepository;
        
-        public FundacionService(FundacionRepository fundacionRepository, IMailSender mailSender)
+        public FundacionService(FundacionRepository fundacionRepository)
         {
             _FundacionRepository = fundacionRepository;
         }
@@ -20,7 +20,7 @@ namespace API_ADOPTAPATAS_3.Services
         {
             try
             {
-                var registroExitoso = await _FundacionRepository.RegistrarFundacionAsync(requestRegister);
+                var registroExitoso = await _FundacionRepository.RegistrarFundacion(requestRegister);
               
                 string email = "tukodatabases@gmail.com";
                 string password = "fulscagiehwazjnp";
@@ -78,7 +78,7 @@ namespace API_ADOPTAPATAS_3.Services
             {
                 var Canino = await _FundacionRepository.BuscarCanino(find);
 
-                if (Canino != null)
+                if (Canino != null )
                 {
                     return new ResponseBuscarCaninoDto
                     {
@@ -114,7 +114,7 @@ namespace API_ADOPTAPATAS_3.Services
         public async Task<List<ResponseListaCaninosDto>> ObtenerCaninosDisponibles()
         {
             // Utiliza el método del repositorio para obtener la lista de caninos disponibles
-            var caninos = await _FundacionRepository.ObtenerCaninosDisponiblesAsync();
+            var caninos = await _FundacionRepository.ObtenerCaninosDisponibles();
 
             if (caninos != null && caninos.Any())
             {
@@ -152,7 +152,7 @@ namespace API_ADOPTAPATAS_3.Services
         {
             try
             {
-                var registroExitoso = await _FundacionRepository.CrearCaninoAsync(reqCrearCaninoDto);
+                var registroExitoso = await _FundacionRepository.CrearCanino(reqCrearCaninoDto);
 
                 return new ResponseGeneric
                 {
@@ -243,7 +243,6 @@ namespace API_ADOPTAPATAS_3.Services
                 };
             }
         }
-
         public async Task<List<ResponseListaCaninosDto>> ObtenerCaninosPorFundacion(ReqIdFunDto idFundacion)
         {
             // Utiliza el método del repositorio para obtener la lista de caninos asociados a una fundación específica

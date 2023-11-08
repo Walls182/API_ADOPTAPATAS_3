@@ -33,7 +33,9 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
 
         public async Task<bool> RegistrarUsuarioAsync(ReqRegisterDto registerDto)
         {
-            if (await _dbContext.Logins.AnyAsync(u => u.Usuario == registerDto.Usuario))
+            var usuarioExistente = await _dbContext.Usuarios
+                .AnyAsync(u => u.Nombre == registerDto.Nombre && u.Correo == registerDto.Correo);
+            if (usuarioExistente)
             {
                 return false; // Nombre de usuario duplicado
             }

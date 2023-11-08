@@ -1,4 +1,5 @@
-﻿using API_ADOPTAPATAS_3.Dtos.DtoUser;
+﻿using API_ADOPTAPATAS_3.Dtos;
+using API_ADOPTAPATAS_3.Dtos.DtoUser;
 using API_ADOPTAPATAS_3.Dtos.RequestUser;
 using API_ADOPTAPATAS_3.Dtos.Responses;
 using API_ADOPTAPATAS_3.Repositories.Repository;

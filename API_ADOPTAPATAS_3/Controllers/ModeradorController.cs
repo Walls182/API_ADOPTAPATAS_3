@@ -19,8 +19,9 @@ namespace API_ADOPTAPATAS_3.Controllers
         {
             _moderadorService = moderador;
         }
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        
         [HttpPost("/cambiorol")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<ResponseGeneric>> CambioRol([FromBody] ReqCambioRolDto rol)
         {
             if (!ModelState.IsValid)
@@ -78,8 +79,9 @@ namespace API_ADOPTAPATAS_3.Controllers
             }
         }
         */
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        
         [HttpPost("/activarfundacion")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<ResponseGeneric>> ActivarFundacionService([FromBody] ReqActualizarFundacionDto fundacion)
         {
             if (!ModelState.IsValid)
@@ -108,8 +110,9 @@ namespace API_ADOPTAPATAS_3.Controllers
             }
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+       
         [HttpGet("/obtenerfundaciones")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<List<ResponseListaFundacionesDto>>> ObtenerFundaciones()
         {
 

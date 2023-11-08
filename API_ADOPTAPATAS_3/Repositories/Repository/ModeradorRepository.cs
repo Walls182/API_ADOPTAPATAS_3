@@ -9,10 +9,14 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
     public class ModeradorRepository
     {
         private readonly BdadoptapatasContext _dbContext;
+        private readonly Encrip _encrip;
+        private readonly GenericPass _genericPass;
 
-        public ModeradorRepository(BdadoptapatasContext dbContext)
+        public ModeradorRepository(BdadoptapatasContext dbContext, Encrip encrip, GenericPass genericPass)
         {
             _dbContext = dbContext;
+            _encrip = encrip;
+            _genericPass = genericPass;
         }
 
         public async Task<bool> CambiarRolUsuarioAsync(ReqCambioRolDto rol)
@@ -55,40 +59,41 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
 
         public async Task<ResponseActivarFunDto> ActivarFundacionAsync(ReqActualizarFundacionDto id)
         {
-            Encrip _encrip = new Encrip();
-            GenericPass genericPass = new GenericPass();
-            ResponseActivarFunDto activationResult = new ResponseActivarFunDto();
+            var fundacion = await _dbContext.Fundacions.FindAsync(id.Id);
 
-            var fundacion = await _dbContext.Fundacions.FindAsync(id);
-
-            if (fundacion == null)
+            if (fundacion != null)
             {
-                return null; // Fundación no encontrada
+                // Genera una nueva contraseña
+                var contrasena = _genericPass.GenerateRandomPassword();
+
+                // Busca la entidad Login asociada a la fundación
+                var login = await _dbContext.Logins.FindAsync(fundacion.FkLogin);
+
+                if (login != null)
+                {
+                    // Actualiza las credenciales en la entidad Login
+                    login.Usuario = fundacion.NombreRepresentante;
+                    login.Contrasena = _encrip.HashPassword(contrasena);
+                }
+
+                // Cambia el estado y guarda los cambios
+                fundacion.FkEstado = 1;
+
+                await _dbContext.SaveChangesAsync();
+
+                var activationResult = new ResponseActivarFunDto
+                {
+                    Usuario = fundacion.NombreRepresentante,
+                    Contrasena = contrasena,
+                    Correo = fundacion.Correo
+                };
+
+                return activationResult;
             }
 
-            string usuario = fundacion.NombreRepresentante;
-            string contrasena = genericPass.GenerateRandomPassword();
-
-            var nuevaCredencial = new Login
-            {
-                Usuario = usuario,
-                Contrasena = _encrip.HashPassword(contrasena)
-            };
-
-            _dbContext.Logins.Add(nuevaCredencial);
-            await _dbContext.SaveChangesAsync();
-
-            fundacion.FkLogin = nuevaCredencial.IdLogin;
-            fundacion.FkEstado = 1;
-            await _dbContext.SaveChangesAsync();
-
-            // Configura los datos en el objeto activationResult
-            activationResult.Usuario = usuario;
-            activationResult.Contrasena = contrasena;
-            activationResult.Correo = fundacion.Correo;
-
-            return activationResult; // Devuelve los datos de activación
+            return null; // Fundación no encontrada
         }
+
 
         public async Task<List<Fundacion>> ObtenerFundaciones()
         {

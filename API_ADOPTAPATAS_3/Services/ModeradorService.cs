@@ -127,6 +127,7 @@ namespace API_ADOPTAPATAS_3.Services
                 return new ResponseGeneric
                 {
                     respuesta = 0,
+                    mensaje = "Error en la actualizacion: " + ex.Message
                 };
             }
         }

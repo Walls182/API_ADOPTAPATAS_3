@@ -4,7 +4,7 @@
     {
         public int Respuesta { get; set; }
         public string Token { get; set; } = string.Empty;
-        //public DateTime TiempoExpiracion { get; set; }
+        public DateTime TiempoExpiracion { get; set; }
 
         public int? IdRol { get; set; } 
 

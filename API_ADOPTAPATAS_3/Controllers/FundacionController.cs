@@ -52,8 +52,9 @@ namespace API_ADOPTAPATAS_3.Controllers
                 return BadRequest($"Error en la creación de usuario: {ex.Message}");
             }
         }
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        
         [HttpPost("/buscar")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<ResponseBuscarCaninoDto>> BuscarCanino(ReqBuscarCaninoDto find)
         {
             try
@@ -77,6 +78,7 @@ namespace API_ADOPTAPATAS_3.Controllers
             }
         }
         [HttpPost("/disponibles")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<List<ResponseListaCaninosDto>>> ObtenerCaninosDisponibles()
         {
             try
@@ -99,7 +101,8 @@ namespace API_ADOPTAPATAS_3.Controllers
                 return StatusCode(500, "Error en la obtención de caninos disponibles"); // Retorna 500 Internal Server Error en caso de excepción
             }
         }
-            [HttpPost("/crear")]
+        [HttpPost("/crear")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<ResponseGeneric>> CreateCanino([FromBody] ReqCrearCaninoDto reqCrearCaninoDto)
         {
             if (!ModelState.IsValid)
