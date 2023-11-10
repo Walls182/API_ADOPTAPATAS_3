@@ -17,19 +17,30 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
             _encrip = encrip;
         }
 
-        public async Task<int?> ObtenerIdRolUsuarioAsync(ReqLoginDto loginDto)
+        public async Task<(int? Rol, int? Id)> ObtenerRolIdUsuarioAsync(ReqLoginDto loginDto)
         {
             var login = await _dbContext.Logins.FirstOrDefaultAsync(u => u.Usuario == loginDto.Usuario);
 
             if (login == null || !_encrip.VerifyPassword(loginDto.Contrasena, login.Contrasena))
             {
-                return null; // Usuario no existe o contraseña incorrecta
+                return (null, null); // Usuario no existe o contraseña incorrecta
             }
 
             var usuario = await _dbContext.Usuarios.FirstOrDefaultAsync(u => u.FkLogin == login.IdLogin);
+            var fundacion = await _dbContext.Fundacions.FirstOrDefaultAsync(f => f.FkLogin == login.IdLogin);
 
-            return usuario?.FkRol;
+            if (usuario != null)
+            {
+                return (usuario.FkRol, usuario.IdUsuario); // Si es un usuario, devuelve el rol y el ID del usuario
+            }
+            else if (fundacion != null)
+            {
+                return (fundacion.FkRol, fundacion.IdFundacion); // Si es una fundación, devuelve el rol y el ID de la fundación
+            }
+
+            return (null, null); // No se encontró ni usuario ni fundación
         }
+
 
         public async Task<bool> RegistrarUsuarioAsync(ReqRegisterDto registerDto)
         {

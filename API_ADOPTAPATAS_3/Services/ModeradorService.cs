@@ -100,14 +100,16 @@ namespace API_ADOPTAPATAS_3.Services
                         "");
 
                     // Crea el cuerpo del mensaje en formato HTML
-                    string body = @"
-                                <h1>Bienvenido a Adoptapatas Conect</h1>
-                                <p>Gracias por unirte a nuestra comunidad. Estamos emocionados de tenerte como parte de ADOPTAPATASCONNECT.</p>
-                                <h2>Tu solicitud de registro en adoptapatas ha sido aprobada. A continuación, te enviamos las credenciales para iniciar sesión en la plataforma.</h2>
-                                <img src='https://i.pinimg.com/736x/83/c3/7c/83c37c101f433d7c2eea87a18e3f45b5.jpg' alt='Imagen de bienvenida'>
-                                <p><strong>Usuario:</strong> " + activationResult.Usuario +
-                                "<p>< strong > Contraseña:</ strong > " + activationResult.Contrasena +
-                                "</p><h2>TE DAMOS LAS GRACIAS EN NUESTRO EQUIPO DE TRABAJO</h2>";
+                    string body = $@"
+                                    <h1>Bienvenido a Adoptapatas Conect</h1>
+                                    <p>Gracias por unirte a nuestra comunidad. Estamos emocionados de tenerte como parte de ADOPTAPATASCONNECT.</p>
+                                    <h2>Tu solicitud de registro en Adoptapatas ha sido aprobada. A continuación, te enviamos las credenciales para iniciar sesión en la plataforma.</h2>
+                                    <img src='https://i.pinimg.com/736x/83/c3/7c/83c37c101f433d7c2eea87a18e3f45b5.jpg' alt='Imagen de bienvenida'>
+                                    <p><strong>Usuario:</strong> {activationResult.Usuario}</p>
+                                    <p><strong>Contraseña:</strong> {activationResult.Contrasena}</p>
+                                    <h2>TE DAMOS LAS GRACIAS EN NUESTRO EQUIPO DE TRABAJO</h2>
+                                ";
+
                     message.IsBodyHtml = true;
                     message.Body = body;
 

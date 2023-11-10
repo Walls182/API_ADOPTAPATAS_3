@@ -2,10 +2,14 @@
 using API_ADOPTAPATAS_3.Dtos.DtoUser;
 using API_ADOPTAPATAS_3.Dtos.RequestUser;
 using API_ADOPTAPATAS_3.Dtos.Responses;
+using API_ADOPTAPATAS_3.Repositories.Models;
 using API_ADOPTAPATAS_3.Repositories.Repository;
 using API_ADOPTAPATAS_3.Utility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using NuGet.Protocol.Core.Types;
+using System.Net.Mail;
+using System.Net;
 
 namespace API_ADOPTAPATAS_3.Services
 {
@@ -24,13 +28,15 @@ namespace API_ADOPTAPATAS_3.Services
         {
             var responseLoginDto = new ResponseLoginDto();
 
-            var idRol = await _userRepository.ObtenerIdRolUsuarioAsync(requestLoginDto);
+            // Obtén la tupla de rol e id
+            var (rol, id) = await _userRepository.ObtenerRolIdUsuarioAsync(requestLoginDto);
 
-            if (idRol.HasValue)
+            if (rol.HasValue)
             {
                 responseLoginDto = JwtUtility.GenToken(responseLoginDto, _jwtSettings);
                 responseLoginDto.Respuesta = 1;
-                responseLoginDto.IdRol = idRol.Value;
+                responseLoginDto.IdRol = rol;
+                responseLoginDto.IdUsuario = id; // Agrega el ID al objeto de respuesta
             }
             else
             {
@@ -40,12 +46,48 @@ namespace API_ADOPTAPATAS_3.Services
             return responseLoginDto;
         }
 
+
         public async Task<ResponseGeneric> CreacionUsuarioAsync(ReqRegisterDto requestRegister)
         {
             try
             {
                 var registroExitoso = await _userRepository.RegistrarUsuarioAsync(requestRegister);
+                string email = "tukodatabases@gmail.com";
+                string password = "fulscagiehwazjnp";
+                string smtpServer = "smtp.gmail.com";
+                int smtpPort = 587;
 
+                if (registroExitoso== true)
+                {
+
+                    var client = new SmtpClient(smtpServer, smtpPort)
+                    {
+                        UseDefaultCredentials = false,
+                        Credentials = new NetworkCredential(email, password),
+                        EnableSsl = true,
+                    };
+
+                    var message = new MailMessage
+                        (email, requestRegister.Correo,
+                        "CONFIRMACION DE REGISTRO",
+                        "BIENVENIDA A " + requestRegister.Nombre +
+                        "Tu solicitud de registro fue aprobada ," +
+                        " disfruta tu experiencia" +
+                        "");
+                    // Crea el cuerpo del mensaje en formato HTML
+                    string body = @"
+                                    <h1>Bienvenido a Adoptapatas Conect</h1>
+                                    <p>" + requestRegister.Nombre + @" Gracias por unirte a nuestra comunidad. Estamos emocionados de tenerte como parte de ADOPTAPATASCONNECT.</p>
+                                    <img src='https://th.bing.com/th/id/OIP.tdtoOX9iX1gqLR4Kvf7_3gHaHa?pid=ImgDet&rs=1' alt='Imagen de bienvenida' />
+                                    </p>
+                                    <h2>TE DAMOS LAS GRACIAS EN NUESTRO EQUIPO DE TRABAJO</h2>
+                                ";
+
+                    message.IsBodyHtml = true;
+                    message.Body = body;
+
+                    client.Send(message);
+                }
                 return new ResponseGeneric
                 {
                     respuesta = registroExitoso ? 1 : 0
@@ -62,8 +104,6 @@ namespace API_ADOPTAPATAS_3.Services
                 };
             }
         }
-
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ResponseGeneric> CreacionDonacionAsync(ReqDonacionDto donacionDto)
         {
             var responseGeneric = new ResponseGeneric();

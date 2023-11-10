@@ -4,8 +4,8 @@
     {
         public string GenerateRandomPassword()
         {
-            int passwordLength = 8; // Longitud de la contraseña
-            string allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
+            int passwordLength = 10; // Longitud de la contraseña
+            string allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_*?¿¡!";
             Random random = new Random();
 
             char[] password = new char[passwordLength];

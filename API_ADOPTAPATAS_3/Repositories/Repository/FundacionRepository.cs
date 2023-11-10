@@ -46,7 +46,7 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
                 FotoFundacion = fundacionDto.FotoFundacion,
                 FkRol = 2,
                 FkEstado = 2,
-                FkLogin = 8
+                FkLogin = null
             };
 
             _dbContext.Fundacions.Add(nuevaFundacion);

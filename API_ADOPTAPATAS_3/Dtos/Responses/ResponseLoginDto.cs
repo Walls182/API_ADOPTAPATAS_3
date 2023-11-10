@@ -7,6 +7,7 @@
         public DateTime TiempoExpiracion { get; set; }
 
         public int? IdRol { get; set; } 
+        public int? IdUsuario { get; set; }
 
     }
 }

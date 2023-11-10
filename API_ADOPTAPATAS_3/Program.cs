@@ -107,11 +107,11 @@ builder.Services.AddSwaggerGen(options =>
         new string[] {}
         }
     });
-    options.SwaggerDoc("v1", new OpenApiInfo
+    options.SwaggerDoc("v3", new OpenApiInfo
     {
-        Version = "v1",
+        Version = "v3",
         Title = "API_ADOPTAPATAS_3:" + builder.Configuration.GetValue<string>("AplicationInsights:Envieroment"),
-        Description = "Adoptapatas_Api con autenticacion y tokenizado, por capa de servicio y se conecta a front",
+        Description = "Adoptapatas_Api con autenticacion y tokenizado. Servicio por capas en la version 3 ",
         Contact = new OpenApiContact
         {
             Name = "Adoptapatas",
@@ -129,13 +129,13 @@ builder.Services.AddSwaggerGen(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    
-}
+
 app.UseCors("AllowAnyOrigin");   // dejarlo en "AllowAnyOrigin" si se configura en cualquier origen
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(u =>
+{
+    u.SwaggerEndpoint("/swagger/v3/swagger.json", "API_ADOPTAPATAS_3");
+});
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

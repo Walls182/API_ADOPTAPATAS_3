@@ -66,20 +66,37 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
                 // Genera una nueva contraseña
                 var contrasena = _genericPass.GenerateRandomPassword();
 
-                // Busca la entidad Login asociada a la fundación
+                // Busca la entidad Login asociada a la fundación o crea una nueva si no existe
                 var login = await _dbContext.Logins.FindAsync(fundacion.FkLogin);
 
-                if (login != null)
+                if (login == null)
                 {
-                    // Actualiza las credenciales en la entidad Login
-                    login.Usuario = fundacion.NombreRepresentante;
-                    login.Contrasena = _encrip.HashPassword(contrasena);
+                    // Crea un nuevo Login
+                    login = new Login
+                    {
+                        Usuario = fundacion.NombreRepresentante,
+                        Contrasena = _encrip.HashPassword(contrasena)
+                    };
+                    _dbContext.Logins.Add(login);
                 }
 
-                // Cambia el estado y guarda los cambios
-                fundacion.FkEstado = 1;
+                // Actualiza las credenciales en la entidad Login
+                login.Usuario = fundacion.NombreRepresentante;
+                login.Contrasena = _encrip.HashPassword(contrasena);
 
+                // Guarda los cambios en el contexto antes de asignar el Login a la Fundacion
                 await _dbContext.SaveChangesAsync();
+
+                // Asigna el Login a la Fundacion después de guardarlo
+                fundacion.FkLogin = login.IdLogin;
+
+                // Verifica si la fundación ya está activada antes de cambiar el estado
+                if (fundacion.FkEstado != 1)
+                {
+                    // Cambia el estado solo si no está activada
+                    fundacion.FkEstado = 1;
+                    await _dbContext.SaveChangesAsync();
+                }
 
                 var activationResult = new ResponseActivarFunDto
                 {
@@ -93,6 +110,8 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
 
             return null; // Fundación no encontrada
         }
+
+
 
 
         public async Task<List<Fundacion>> ObtenerFundaciones()
