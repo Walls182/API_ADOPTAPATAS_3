@@ -1,5 +1,6 @@
 ﻿using API_ADOPTAPATAS_3.Dtos.DtoUser;
 using API_ADOPTAPATAS_3.Dtos.RequestUser;
+using API_ADOPTAPATAS_3.Dtos.Responses;
 using API_ADOPTAPATAS_3.Repositories.Models;
 using API_ADOPTAPATAS_3.Utility;
 using Microsoft.EntityFrameworkCore;
@@ -17,13 +18,13 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
             _encrip = encrip;
         }
 
-        public async Task<(int? Rol, int? Id)> ObtenerRolIdUsuarioAsync(ReqLoginDto loginDto)
+        public async Task<ResponseLoginDto> ObtenerRolIdUsuarioAsync(ReqLoginDto loginDto)
         {
             var login = await _dbContext.Logins.FirstOrDefaultAsync(u => u.Usuario == loginDto.Usuario);
 
             if (login == null || !_encrip.VerifyPassword(loginDto.Contrasena, login.Contrasena))
             {
-                return (null, null); // Usuario no existe o contraseña incorrecta
+                return new ResponseLoginDto { Respuesta = 0 }; // Usuario no existe o contraseña incorrecta
             }
 
             var usuario = await _dbContext.Usuarios.FirstOrDefaultAsync(u => u.FkLogin == login.IdLogin);
@@ -31,18 +32,34 @@ namespace API_ADOPTAPATAS_3.Repositories.Repository
 
             if (usuario != null)
             {
-                return (usuario.FkRol, usuario.IdUsuario); // Si es un usuario, devuelve el rol y el ID del usuario
+                return new ResponseLoginDto
+                {
+                    Respuesta = 1,
+                    IdRol = usuario.FkRol,
+                    IdUsuario = usuario.IdUsuario,
+                    Nombre = usuario.Nombre, // Ajusta según las propiedades de tu entidad Usuario
+                    Correo = usuario.Correo // Ajusta según las propiedades de tu entidad Usuario
+                };
             }
             else if (fundacion != null)
             {
-                return (fundacion.FkRol, fundacion.IdFundacion); // Si es una fundación, devuelve el rol y el ID de la fundación
+                return new ResponseLoginDto
+                {
+                    Respuesta = 1,
+                    IdRol = fundacion.FkRol,
+                    IdUsuario = fundacion.IdFundacion, // Considera si quieres que sea IdUsuario o IdFundacion
+                    Nombre = fundacion.NombreFundacion, // Ajusta según las propiedades de tu entidad Fundacion
+                    Correo = fundacion.Correo // Ajusta según las propiedades de tu entidad Fundacion
+                };
             }
 
-            return (null, null); // No se encontró ni usuario ni fundación
+            return new ResponseLoginDto { Respuesta = 0 }; // No se encontró ni usuario ni fundación
         }
 
+        // ... otros métodos del repositorio ...
+    
 
-        public async Task<bool> RegistrarUsuarioAsync(ReqRegisterDto registerDto)
+    public async Task<bool> RegistrarUsuarioAsync(ReqRegisterDto registerDto)
         {
             var usuarioExistente = await _dbContext.Usuarios
                 .AnyAsync(u => u.Nombre == registerDto.Nombre && u.Correo == registerDto.Correo);

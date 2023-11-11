@@ -26,21 +26,12 @@ namespace API_ADOPTAPATAS_3.Services
 
         public async Task<ResponseLoginDto> InicioSesionAsync(ReqLoginDto requestLoginDto)
         {
-            var responseLoginDto = new ResponseLoginDto();
+            var responseLoginDto = await _userRepository.ObtenerRolIdUsuarioAsync(requestLoginDto);
 
-            // Obtén la tupla de rol e id
-            var (rol, id) = await _userRepository.ObtenerRolIdUsuarioAsync(requestLoginDto);
-
-            if (rol.HasValue)
+            if (responseLoginDto.Respuesta == 1)
             {
                 responseLoginDto = JwtUtility.GenToken(responseLoginDto, _jwtSettings);
-                responseLoginDto.Respuesta = 1;
-                responseLoginDto.IdRol = rol;
-                responseLoginDto.IdUsuario = id; // Agrega el ID al objeto de respuesta
-            }
-            else
-            {
-                responseLoginDto.Respuesta = 0;
+                
             }
 
             return responseLoginDto;

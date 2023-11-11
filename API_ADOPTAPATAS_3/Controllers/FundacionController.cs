@@ -77,8 +77,7 @@ namespace API_ADOPTAPATAS_3.Controllers
                 return StatusCode(500, "Error en la búsqueda"); // Retorna 500 Internal Server Error en caso de excepción
             }
         }
-        [HttpPost("/disponibles")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("/disponibles")]
         public async Task<ActionResult<List<ResponseListaCaninosDto>>> ObtenerCaninosDisponibles()
         {
             try
