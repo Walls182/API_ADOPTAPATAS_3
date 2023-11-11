@@ -73,10 +73,10 @@ builder.Services.AddAuthentication(option =>
 });
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAnyOrigin",  // dejarlo en "AllowAnyOrigin" para cualquier origen
+    options.AddPolicy("AllowAnyOrigin",  // dejarlo en "AllowAnyOrigin" para cualquier origen y en --"AllowSpecificOrigin" para el link de adoptapatas
         builder =>
         {
-            builder.WithOrigins("http://localhost:4200") // Reemplaza aqui los link de la pagina de adoptapatas
+            builder.WithOrigins("AllowSpecificOrigin") // Reemplazo aqui los link de la pagina de adoptapatas
             .AllowAnyMethod()
             .AllowAnyHeader();
         });
@@ -128,9 +128,9 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 
-app.UseCors("AllowAnyOrigin");   // dejarlo en "AllowAnyOrigin" si se configura en cualquier origen
+
+app.UseCors("AllowSpecificOrigin");   // dejarlo en "AllowAnyOrigin" si se configura en cualquier origen -----"AllowSpecificOrigin" para el link de adoptapatas
 app.UseSwagger();
 app.UseSwaggerUI(u =>
 {
